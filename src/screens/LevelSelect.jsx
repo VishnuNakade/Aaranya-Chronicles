@@ -1,8 +1,26 @@
-import { Link } from 'react-router-dom';
-import { Play, Lock, Star, Coins } from 'lucide-react';
+import { levels, worlds, getCoinTotal } from '../game/data/levels';
+import { Link, Navigate, useParams } from 'react-router-dom';
+import { Play, Lock, Star, Coins, Clock } from 'lucide-react';
 import Screen from '../components/Screen';
 import { useProgress } from '../app/ProgressContext';
+import { formatTime } from '../game/results';
+import StoryGate from '../components/StoryGate';
 export default function LevelSelect() {
   const { save } = useProgress();
-  return <Screen title="Meadow Lands" eyebrow="WORLD 01" back="/worlds"><p className="subtitle">Follow the river. Find your first light.</p><div className="levels"><Link className="level available" to="/play/1-1"><div className="level-art"><span>1-1</span><Play size={32} /></div><div className="level-info"><h2>The First Steps</h2><p><span><Star size={16} fill={save.completed ? 'currentColor' : 'none'} />{save.completed ? 'Completed' : 'Ready to explore'}</span><span><Coins size={15} />{save.bestCoins}/8</span></p></div></Link>{['The Riverbend', 'Moss & Memories', 'The Old Sanctuary'].map((name, i) => <div className="level locked" key={name}><div className="level-art"><span>1-{i + 2}</span><Lock size={28} /></div><div className="level-info"><h2>{name}</h2><p>Coming later</p></div></div>)}</div></Screen>;
+  const { worldId } = useParams();
+  const world = worlds.find(w => w.id === worldId);
+  if (!world?.levelIds.length) return <Navigate to="/worlds" replace />;
+  return <StoryGate storyId={world.storyId}><Screen title={world.name} eyebrow="CHOOSE YOUR PATH" back="/worlds">
+    <p className="subtitle">Follow the river. Find your next light.</p>
+    <div className="levels">{world.levelIds.map(id => {
+      const level = levels[id]; const record = save.results[id]; const unlocked = save.unlockedLevels.includes(id);
+      const contents = <><div className="level-art"><span>{id}</span>{unlocked ? <Play size={32} /> : <Lock size={28} />}</div>
+        <div className="level-info"><h2>{level.name}</h2>
+          <p><span><Star size={16} fill={record ? 'currentColor' : 'none'} />{record ? `${record.stars} / 3 stars` : unlocked ? 'Ready to explore' : 'Locked'}</span>
+          <span><Coins size={15} />{record?.coins ?? 0}/{getCoinTotal(level)}</span></p>
+          {record?.bestTimeMs != null && <p className="level-best-time"><span><Clock size={14} />Best time {formatTime(record.bestTimeMs)}</span></p>}
+        </div></>;
+      return unlocked ? <Link key={id} className="level available" to={`/play/${id}`} aria-label={`Level ${id}: ${level.name}`}>{contents}</Link>
+        : <div key={id} className="level locked" aria-label={`Level ${id}: locked`}>{contents}</div>;
+    })}</div></Screen></StoryGate>;
 }
