@@ -1,4 +1,7 @@
 import Phaser from 'phaser';
+import EnvironmentRenderer from '../environment/EnvironmentRenderer';
+import FallingRocks from '../environment/FallingRocks';
+import GameEffects from '../effects/GameEffects';
 import Player from '../entities/Player';
 import StoneGuardian from '../entities/StoneGuardian';
 import { createEnemy } from '../entities/createEnemy';
@@ -14,13 +17,16 @@ export default class GameScene extends Phaser.Scene {
     this.respawnPoint = { ...this.level.spawn }; this.checkpointIndex = -1;
     this.killY = this.level.killY ?? this.level.height + 50;
     this.physics.world.setBounds(0, 0, this.level.width, this.killY + 120); this.cameras.main.setBounds(0, 0, this.level.width, this.level.height);
-    if (this.textures.exists(this.level.background)) this.add.image(480, 270, this.level.background).setDisplaySize(960, 640).setScrollFactor(0).setAlpha(0.72);
-    this.add.rectangle(480, 270, 960, 540, 0xb0dcc9, 0.14).setScrollFactor(0);
+    this.environment = this.level.environment ? new EnvironmentRenderer(this, this.level) : null;
+    if (!this.environment && this.textures.exists(this.level.background)) this.add.image(480, 270, this.level.background).setDisplaySize(960, 640).setScrollFactor(0).setAlpha(0.72);
+    if (!this.environment) this.add.rectangle(480, 270, 960, 540, 0xb0dcc9, 0.14).setScrollFactor(0);
     this.objects = buildLevel(this, this.level);
     this.platforms = this.objects.solids;
+    this.effects = new GameEffects(this);
     this.player = new Player(this, this.level.spawn.x, this.level.spawn.y, this.settings); this.physics.add.collider(this.player, this.platforms);
-    this.player.on('damage', () => { this.publish(); this.tone(150); if (!this.settings.reducedMotion) this.cameras.main.shake(100, 0.004); });
-    this.player.on('attack', () => this.tone(330));
+    this.fallingRocks = this.environment ? new FallingRocks(this, this.level.environment.hazards ?? [], this.environment) : null;
+    this.player.on('damage', () => { this.publish(); this.tone(150); this.effects.shake(100, 0.004); });
+    this.player.on('attack', () => { this.tone(330); this.effects.sword(this.player); });
     this.player.on('death-complete', () => this.finish(false));
     this.physics.add.collider(this.player, this.objects.crates);
     this.physics.add.overlap(this.player, this.objects.spikes, () => this.player.takeDamage());
@@ -29,19 +35,20 @@ export default class GameScene extends Phaser.Scene {
       this.checkpointIndex = checkpoint.getData('index');
       this.respawnPoint = { ...checkpoint.getData('config').spawn };
       checkpoint.getData('flag').setFillStyle(0xf0cb73);
-      this.tone(920);
+      this.effects.checkpoint(checkpoint); this.tone(920);
       this.bridge.emit('checkpoint', checkpoint.getData('config').id);
     });
     this.physics.add.overlap(this.player, this.objects.gate, () => { if (!this.player.dead) this.finish(true); });
     this.coins = this.physics.add.staticGroup();
-    this.level.coins.forEach(([x, y]) => { const coin = this.coins.create(x, y, 'coin'); if (!this.settings.reducedMotion) this.tweens.add({ targets: coin, alpha: 0.6, duration: 700, yoyo: true, repeat: -1 }); });
-    this.physics.add.overlap(this.player, this.coins, (_player, coin) => { coin.destroy(); this.coinsCollected++; this.tone(760); this.publish(); });
+    this.level.coins.forEach(([x, y]) => { const coin = this.coins.create(x, y, 'coin'); this.effects.coin(coin); });
+    this.physics.add.overlap(this.player, this.coins, (_player, coin) => { this.effects.burst(coin.x, coin.y); coin.destroy(); this.coinsCollected++; this.tone(760); this.publish(); });
     this.enemies = this.physics.add.group();
     this.level.enemies.forEach(config => {
       const enemy = createEnemy(this, config);
+      enemy.on('damage', () => this.effects.hit(enemy));
       enemy.on('death', () => { this.enemiesDefeated++; });
       enemy.on('coin-drop', ({ x, y, count }) => {
-        for (let i = 0; i < count; i++) this.coins.create(x + (i - (count - 1) / 2) * 26, y, 'coin').setData('bonus', true);
+        for (let i = 0; i < count; i++) this.effects.coin(this.coins.create(x + (i - (count - 1) / 2) * 26, y, 'coin').setData('bonus', true));
       });
       this.enemies.add(enemy);
     });
@@ -72,10 +79,8 @@ export default class GameScene extends Phaser.Scene {
     const offRestart = this.bridge.on('restart', () => this.scene.restart());
     const offSettings = this.bridge.on('settings', settings => {
       this.settings = settings; this.player.reducedMotion = settings.reducedMotion;
-      this.coins.getChildren().forEach(coin => {
-        this.tweens.killTweensOf(coin); coin.setAlpha(1);
-        if (!settings.reducedMotion) this.tweens.add({ targets: coin, alpha: 0.6, duration: 700, yoyo: true, repeat: -1 });
-      });
+      this.coins.getChildren().forEach(coin => this.effects.coin(coin));
+      if (settings.reducedMotion) this.effects.clear();
     });
     this.blur = () => this.setPaused(true);
     this.game.events.on(Phaser.Core.Events.BLUR, this.blur);
@@ -121,10 +126,13 @@ export default class GameScene extends Phaser.Scene {
   update(_time, delta) {
     if (!this.keys || this.finished) return;
     if (this.paused || this.victory) return;
+    const follow = 1 - Math.pow(1 - 0.09, Math.min(delta, 50) / (1000 / 60));
+    this.cameras.main.setLerp(follow, follow);
     this.elapsedMs += delta;
     this.player.update({ left: this.keys.LEFT.isDown || this.keys.A.isDown || this.touch.left, right: this.keys.RIGHT.isDown || this.keys.D.isDown || this.touch.right, ...this.pending }, delta);
     this.pending = {};
     if (this.player.dead) { this.enemies.setVelocityX(0); return; }
+    this.fallingRocks?.update(delta);
     if (this.boss) {
       this.boss.update(this.player, delta);
       if (this.boss.vulnerable && this.player.hitEnemy(this.boss)) this.boss.takeDamage(1, this.player.x);

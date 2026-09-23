@@ -94,6 +94,8 @@ Register `slime-death` or `goblin-death` Phaser animations to use custom death f
 
 ## Level authoring
 
+World 1 now has a separate visual environment layer. See [World 1 environment configuration](docs/world1-environment.md) and [PNG asset placement](src/assets/world1/README.md). Meadow levels now render the supplied PNG layers and terrain by default; originals remain in `src/assets/world1`, with non-destructive crop metadata for padded terrain. Gameplay collision rectangles remain independent of art.
+
 World 1 Level 1 is Meadow Lands: The First Steps. Two gaps separate three ground sections; optional raised platforms hold coins. Two checkpoint flags remember your latest safe respawn for the current attempt, spikes deal damage, and solid crates can be jumped onto or broken with a sword. Reach the sanctuary gate to win; collecting coins alone never completes the level. Restarting resets checkpoints, crates, coins and health.
 
 Add a new entry to `src/game/data/levels.js`, then link to `/play/<id>`. `GameScene` loads the entry without level-specific branches. `src/game/level/buildLevel.js` builds geometry and interactive objects from it:
@@ -118,7 +120,15 @@ The React world map (`src/screens/WorldMap.jsx` and `WorldMap.css`) displays con
 
 The supplied reference was treated as visual inspiration, not as instructions. Player, enemy and Guardian textures are intentionally simple procedural prototype art; production animation sheets, later bosses, inventory, additional levels and full music are future work.
 
-## Stone Guardian
+## Game Feel
+
+`src/game/effects/GameEffects.js` owns a reusable pool of 24 spark sprites and one sword arc. Coin pickups and enemy hits reuse these sprites; excess particles are skipped. Effects have short lifetimes, no physics bodies and no continuous emitters. Floating coins use one tween each with synchronized pickup bodies; dropped coins use the same animation. Checkpoints pulse once, and combat shakes are brief and cannot continually restart an active shake.
+
+`BootScene.js` generates the tiny effect textures once. `GameScene.js` connects events to effects and adjusts camera interpolation to elapsed frame time. Scene pause freezes all Phaser effects; restart discards the scene-owned pool. Changing Reduced Motion clears active sparks, slash, shake and checkpoint pulses and stops coin bobbing immediately.
+
+`src/motion.css` adds press feedback, short screen-entry fades and staggered completion stars using only opacity and transforms. These animations respect both the game setting and the browser's reduced-motion preference. React completion effects remain independent of the frozen gameplay scene. No extra animation dependency or full-screen postprocessing is used. `tests/effects.spec.js` covers pool limits, pause, reduced motion and restart cleanup; actual low-end Android frame rates still need device testing.
+
+## Stone Guardian Encounter
 
 Level 1-8 is a dedicated boss arena. `src/game/entities/StoneGuardian.js` owns an Arcade Physics state machine: recovery, windup, attack, phase transition and defeat. Its 18 HP divide into three phases at 12 and 6 HP. Walking strikes commit to a direction, ground smash marks a 170-pixel radius (jump clear), and rocks aim at the player's position captured at windup start. Warnings last 1000/900/800 ms; recovery lasts 1850/1700/1550 ms. Only recovery and phase transitions expose the core. Hits have a 330 ms cooldown. Projectiles clear before recovery and on defeat.
 

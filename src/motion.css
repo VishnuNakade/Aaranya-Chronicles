@@ -1,0 +1,17 @@
+.screen-entry { display: contents; }
+.screen-entry > main { animation: screen-arrive 200ms ease-out; }
+.primary-button, .secondary-button, .icon-button, .touch-button, .hud-pause {
+  transition: transform 120ms ease-out, background-color 120ms ease-out;
+}
+.primary-button:active:not(:disabled), .secondary-button:active:not(:disabled), .icon-button:active, .touch-button:active, .hud-pause:active:not(:disabled) { transform: scale(0.95); }
+.completion { animation: completion-arrive 260ms ease-out; }
+.completion-stars .earned { animation: star-arrive 420ms cubic-bezier(.2,.8,.3,1.2) both; }
+.completion-stars .earned:nth-child(1) { animation-delay: 100ms; }
+.completion-stars .earned:nth-child(2) { animation-delay: 240ms; }
+.completion-stars .earned:nth-child(3) { animation-delay: 380ms; }
+@keyframes screen-arrive { from { opacity: 0; } to { opacity: 1; } }
+@keyframes completion-arrive { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes star-arrive { from { opacity: 0; transform: scale(.5) rotate(-15deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+html[data-reduced-motion="true"] *, .still * { animation: none !important; transition: none !important; }
+html[data-reduced-motion="true"] :is(button, a):active { transform: none !important; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } :is(button, a):active { transform: none !important; } }

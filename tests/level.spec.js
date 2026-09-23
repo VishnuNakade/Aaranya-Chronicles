@@ -1,21 +1,30 @@
+import { levels } from '../src/game/data/levels';
 import { test, expect } from '@playwright/test';
 
 test('Meadow can be traversed using movement, jumping and attacks', async ({ page }) => {
+  test.setTimeout(60000);
   await page.goto('/#/play/1-1');
   await page.waitForFunction(() => window.__AARANYA_GAME__?.scene.getScene('GameScene')?.player?.body?.blocked.down);
   await page.evaluate(() => {
     const s = window.__AARANYA_GAME__.scene.getScene('GameScene');
     s.touch.right = true;
+    let lastJump = -1000;
     const drive = () => {
       if (s.finished || !s.scene.isActive()) return;
       const p = s.player;
-      if (p.body.blocked.down || (p.jumpsUsed === 1 && p.body.velocity.y > -200)) s.pending.jump = true;
+      const ground = s.level.ground.find(([x, , w]) => p.x >= x && p.x <= x + w);
+      const edge = ground && ground[0] + ground[2] - p.x < 55 && ground[0] + ground[2] < s.level.width;
+      const hazard = s.level.spikes.some(([x, , w]) => x - p.x < 95 && x + w > p.x);
+      const enemy = s.enemies.getChildren().some(e => !e.dead && e.x > p.x && e.x - p.x < 110);
+      const crate = s.objects.crates.getChildren().some(c => c.x > p.x && c.x - p.x < 85);
+      const jump = p.body.blocked.down ? edge || hazard || enemy || crate || p.body.blocked.right : p.jumpsUsed === 1 && p.body.velocity.y > 0 && (!ground || hazard || enemy);
+      if (jump && p.elapsed - lastJump > 200) { s.pending.jump = true; lastJump = p.elapsed; }
       if (p.elapsed >= p.nextAttack) s.pending.attack = true;
       requestAnimationFrame(drive);
     };
     requestAnimationFrame(drive);
   });
-  await expect(page.getByRole('heading', { name: 'LEVEL COMPLETE' })).toBeVisible({ timeout: 20000 });
+  await expect(page.getByRole('heading', { name: 'LEVEL COMPLETE' })).toBeVisible({ timeout: 40000 });
 });
 
 test('Meadow checkpoints, hazards, crates, gate and restart', async ({ page }) => {
@@ -44,5 +53,5 @@ test('Meadow checkpoints, hazards, crates, gate and restart', async ({ page }) =
   await expect(page.getByRole('heading', { name: 'LEVEL COMPLETE' })).toBeVisible();
   await page.getByRole('button', { name: 'Replay' }).click();
   await expect(page.getByLabel('3 hearts')).toBeVisible();
-  expect(await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); return [s.checkpointIndex, s.objects.crates.getLength(), s.physics.world.bounds.width, s.cameras.main.getBounds().width]; })).toEqual([-1, 2, 2400, 2400]);
+  expect(await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); return [s.checkpointIndex, s.objects.crates.getLength(), s.physics.world.bounds.width, s.cameras.main.getBounds().width]; })).toEqual([-1, 2, levels['1-1'].width, levels['1-1'].width]);
 });

@@ -15,7 +15,7 @@ test('star thresholds and time formatting', () => {
 test('results persist, unlock next level, preserve best run and support navigation', async ({ page }) => {
   await page.goto('/#/play/1-1');
   await page.waitForFunction(() => window.__AARANYA_GAME__?.scene.getScene('GameScene')?.player?.body);
-  await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.coinsCollected = 8; s.enemiesDefeated = 2; s.elapsedMs = 65000; s.player.respawn(s.level.exit.x, s.level.exit.y); });
+  await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.coinsCollected = s.level.coins.length + s.level.enemies.length; s.enemiesDefeated = s.level.enemies.length; s.elapsedMs = 65000; s.player.respawn(s.level.exit.x, s.level.exit.y); });
   await expect(page.getByRole('heading', { name: 'LEVEL COMPLETE' })).toBeVisible();
   await expect(page.getByRole('img', { name: '3 of 3 stars' })).toBeVisible();
   await expect(page.getByText('1:05', { exact: true })).toBeVisible();

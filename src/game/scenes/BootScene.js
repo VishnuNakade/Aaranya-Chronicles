@@ -1,9 +1,14 @@
 import Phaser from 'phaser';
+import { preloadEnvironment } from '../environment/assets';
 import { createVeerAnimations } from '../art/veerAnimations';
 import { createGuardianTextures } from '../art/guardianTextures';
 export default class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
-  preload() { this.load.image('forest', '/assets/forest.png'); }
+  preload() {
+    const level = this.registry.get('level');
+    if (level.environment) preloadEnvironment(this, level.environment);
+    else this.load.image('forest', '/assets/forest.png');
+  }
   create() {
     createVeerAnimations(this);
     createGuardianTextures(this);
@@ -14,7 +19,11 @@ export default class BootScene extends Phaser.Scene {
     g.generateTexture('slime', 40, 42); g.clear();
     g.fillStyle(0x416455).fillRoundedRect(8, 22, 25, 18, 4); g.fillStyle(0x9da952).fillCircle(20, 16, 15).fillTriangle(2, 6, 2, 21, 16, 14).fillTriangle(38, 6, 38, 21, 25, 14);
     g.fillStyle(0x17291d).fillRect(12, 13, 5, 4).fillRect(24, 13, 5, 4); g.generateTexture('enemy', 40, 42); g.clear();
-    g.fillStyle(0xffd66d).fillCircle(12, 12, 11); g.lineStyle(2, 0xaf762d).strokeCircle(12, 12, 8); g.lineStyle(2, 0xfff0ab).lineBetween(12, 7, 12, 17); g.generateTexture('coin', 24, 24); g.destroy();
+    g.fillStyle(0xffd66d).fillCircle(12, 12, 11); g.lineStyle(2, 0xaf762d).strokeCircle(12, 12, 8); g.lineStyle(2, 0xfff0ab).lineBetween(12, 7, 12, 17); g.generateTexture('coin', 24, 24); g.clear();
+    g.fillStyle(0xffffff).fillRect(0, 0, 5, 5); g.generateTexture('fx-spark', 5, 5); g.clear();
+    g.lineStyle(5, 0xffedbb, 0.9).beginPath().arc(6, 40, 32, -1.15, 1.15).strokePath();
+    g.lineStyle(2, 0xffffff, 0.8).beginPath().arc(6, 40, 24, -1, 1).strokePath();
+    g.generateTexture('fx-slash', 44, 80); g.destroy();
     this.scene.start('GameScene');
   }
 }

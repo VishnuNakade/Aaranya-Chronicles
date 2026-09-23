@@ -1,3 +1,4 @@
+import { levels, getCoinTotal } from '../src/game/data/levels';
 import { test, expect } from '@playwright/test';
 
 test('enemy health, knockback, cooldown, delayed death and one coin drop', async ({ page }) => {
@@ -18,7 +19,7 @@ test('enemy health, knockback, cooldown, delayed death and one coin drop', async
   await page.waitForFunction(() => window.__AARANYA_GAME__.scene.getScene('GameScene').enemies.getLength() === 1);
   expect(await page.evaluate(() => window.__AARANYA_GAME__.scene.getScene('GameScene').coins.getLength())).toBe(9);
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); const coin = s.coins.getChildren().find(c => c.getData('bonus')); s.player.respawn(coin.x, coin.y); });
-  await expect(page.locator('.coin-count')).toContainText('1 / 10');
+  await expect(page.locator('.coin-count')).toContainText(`1 / ${getCoinTotal(levels['1-1'])}`);
   expect(errors).toEqual([]);
 });
 

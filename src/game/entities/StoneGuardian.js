@@ -54,7 +54,8 @@ export default class StoneGuardian extends Phaser.Physics.Arcade.Sprite {
         if (!this.scene.settings.reducedMotion) this.scene.cameras.main.shake(140, 0.004);
       } else {
         this.remaining = 1400;
-        const rock = this.projectiles.create(this.x + this.attackDirection * 72, this.y - 30, 'guardian-rock');
+        const texture = this.scene.textures.exists('world1:fallingRock') ? 'world1:fallingRock' : 'guardian-rock';
+        const rock = this.projectiles.create(this.x + this.attackDirection * 72, this.y - 30, texture).setDisplaySize(30, 30);
         const direction = new Phaser.Math.Vector2(this.target.x - rock.x, this.target.y - rock.y).normalize();
         rock.setVelocity(direction.x * (230 + this.phase * 25), direction.y * (230 + this.phase * 25));
       }
@@ -83,7 +84,7 @@ export default class StoneGuardian extends Phaser.Physics.Arcade.Sprite {
   takeDamage(amount, sourceX) {
     if (!this.vulnerable || this.elapsed < this.invincibleUntil) return false;
     this.health = Math.max(0, this.health - amount); this.invincibleUntil = this.elapsed + 330;
-    this.scene.tone(200);
+    this.scene.tone(200); this.scene.effects?.hit(this);
     if (!this.health) {
       this.dead = true; this.state = 'defeated'; this.body.enable = false; this.setVelocity(0);
       this.warning.clear(); this.projectiles.clear(true, true); this.clearTint(); this.publish(); this.emit('defeated'); return true;

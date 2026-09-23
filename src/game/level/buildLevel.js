@@ -2,15 +2,20 @@
 export function buildLevel(scene, level) {
   const solids = scene.physics.add.staticGroup();
   for (const [x, y, width, height] of [...(level.ground ?? []), ...(level.platforms ?? [])]) {
-    const block = scene.add.rectangle(x + width / 2, y + height / 2, width, height, 0x354941);
+    const block = scene.add.zone(x + width / 2, y + height / 2, width, height);
     solids.add(block);
-    scene.add.rectangle(x + width / 2, y + 4, width, 8, 0x78a750);
-    for (let dx = 8; dx < width - 12; dx += 42) scene.add.rectangle(x + dx, y + 20, 24, Math.min(12, height - 8), 0x566154, 0.7);
+    if (!level.environment) {
+      scene.add.rectangle(x + width / 2, y + height / 2, width, height, 0x354941);
+      scene.add.rectangle(x + width / 2, y + 4, width, 8, 0x78a750);
+      for (let dx = 8; dx < width - 12; dx += 42) scene.add.rectangle(x + dx, y + 20, 24, Math.min(12, height - 8), 0x566154, 0.7);
+    }
   }
   const spikes = scene.physics.add.staticGroup();
-  for (const [x, y, width, height] of level.spikes ?? []) {
+  const spikeRects = level.environment ? (level.environment.hazards ?? []).filter(h => h.type === 'spikes').map(h => [h.x, h.y, h.width, h.height]) : level.spikes ?? [];
+  for (const [x, y, width, height] of spikeRects) {
     const zone = scene.add.zone(x + width / 2, y + height / 2, width, height);
     spikes.add(zone);
+    if (level.environment) continue;
     const art = scene.add.graphics();
     art.fillStyle(0xdce3d2).lineStyle(2, 0x596961);
     for (let dx = 0; dx < width; dx += 24) {

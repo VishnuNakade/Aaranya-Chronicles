@@ -1,3 +1,4 @@
+import { levels, getCoinTotal } from '../src/game/data/levels';
 import { test, expect } from '@playwright/test';
 async function ready(page) {
   await page.goto('/#/play/1-1');
@@ -32,7 +33,7 @@ test('movement, jump, coins, combat, damage, completion and cleanup', async ({ p
   await page.keyboard.down('ArrowUp'); await page.waitForTimeout(100); await page.keyboard.up('ArrowUp');
   expect(await page.evaluate(() => window.__AARANYA_GAME__.scene.getScene('GameScene').player.body.velocity.y)).toBeLessThan(0);
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.setPosition(300, 372).setVelocity(0); });
-  await expect(page.locator('.coin-count')).toContainText('1 / 10');
+  await expect(page.locator('.coin-count')).toContainText(`1 / ${getCoinTotal(levels['1-1'])}`);
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); const enemy = s.enemies.getChildren()[0]; s.player.setPosition(enemy.x - 50, enemy.y); s.player.facing = 1; });
   await page.keyboard.down('Space'); await page.waitForTimeout(80); await page.keyboard.up('Space');
   await page.waitForFunction(() => window.__AARANYA_GAME__.scene.getScene('GameScene').enemies.getChildren()[0].health === 1);

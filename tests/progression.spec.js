@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { initialProgress, normalizeProgress, completeLevel } from '../src/app/progression';
-import { levels, worlds } from '../src/game/data/levels';
+import { levels, worlds, getCoinTotal, getEnemyTotal } from '../src/game/data/levels';
 
-const run = (levelId, values = {}) => ({ levelId, won: true, bossDefeated: levelId === '1-8', coins: 8, enemiesDefeated: 2, timeMs: 60000, ...values });
+const run = (levelId, values = {}) => ({ levelId, won: true, bossDefeated: levelId === '1-8', coins: Math.ceil(getCoinTotal(levels[levelId]) * .8), enemiesDefeated: getEnemyTotal(levels[levelId]), timeMs: 60000, ...values });
 test('sequential progression, independent records, migration and invalid saves', () => {
   let save = initialProgress();
   expect(save.unlockedLevels).toEqual(['1-1']);
@@ -10,9 +10,9 @@ test('sequential progression, independent records, migration and invalid saves',
   expect(completeLevel(save, run('1-1', { won: false }))).toBe(save);
   save = completeLevel(save, run('1-1'));
   save = completeLevel(save, run('1-1', { coins: 2, enemiesDefeated: 0, timeMs: 30000 }));
-  expect(save.results['1-1']).toMatchObject({ stars: 3, coins: 8, bestTimeMs: 30000 });
-  save = completeLevel(save, run('1-1', { coins: 10, timeMs: 90000 }));
-  expect(save.results['1-1']).toMatchObject({ stars: 3, coins: 10, bestTimeMs: 30000 });
+  expect(save.results['1-1']).toMatchObject({ stars: 3, coins: Math.ceil(getCoinTotal(levels['1-1']) * .8), bestTimeMs: 30000 });
+  save = completeLevel(save, run('1-1', { coins: getCoinTotal(levels['1-1']), timeMs: 90000 }));
+  expect(save.results['1-1']).toMatchObject({ stars: 3, coins: getCoinTotal(levels['1-1']), bestTimeMs: 30000 });
   for (const id of worlds[0].levelIds.slice(1)) save = completeLevel(save, run(id));
   expect(save.unlockedLevels).toEqual([...worlds[0].levelIds, '2-1']);
   expect(Object.keys(save.results)).toHaveLength(8);

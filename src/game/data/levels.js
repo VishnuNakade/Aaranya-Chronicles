@@ -1,3 +1,5 @@
+import { meadowEnvironment } from '../environment/levelEnvironment';
+import { extendMeadow } from './extendMeadow';
 export const getCoinTotal = level => level.coins.length + (level.enemies ?? []).reduce((sum, enemy) => sum + (enemy.coinDrop ?? 1), 0);
 export const worlds = [
   { id: 'meadow', name: 'Meadow Lands', subtitle: 'Where the journey begins', available: true, levelIds: Array.from({ length: 8 }, (_, i) => `1-${i + 1}`) },
@@ -54,3 +56,10 @@ levels['1-8'] = {
 levels['2-1'] = { ...structuredClone(levels['1-1']), id: '2-1', worldId: 'woods',
   worldName: 'Whispering Woods', name: 'Beneath the Canopy', nextLevelId: null };
 export const getEnemyTotal = level => level.enemies.length + (level.boss ? 1 : 0);
+
+for (const level of Object.values(levels)) {
+  if (level.worldId === 'meadow') {
+    if (!level.boss) extendMeadow(level, Number(level.id.split('-')[1]));
+    level.environment = meadowEnvironment(level);
+  }
+}

@@ -52,6 +52,7 @@ test('Guardian arena: sword, armor, phases, pause, victory and World 2', async (
     p.respawn(b.x - 120, 350); p.invincibleUntil = 0;
     start('smash'); const airborne = p.health; b.update(p, 2); const jumpSafe = p.health === airborne;
     start('rock'); b.update(p, 2); const rock = b.projectiles.getChildren()[0]; const rockMoving = rock.body.velocity.length() > 200;
+    if (rock.texture.key !== 'world1:fallingRock' || rock.displayWidth !== 30) throw new Error('Supplied rock artwork or projectile size missing');
     b.update(p, 500); const rockPersists = b.projectiles.countActive() === 1;
     b.update(p, 1000); const rockCleared = b.projectiles.countActive() === 0;
     start('walk'); b.update(p, 2); const walk = b.body.velocity.x < 0;
