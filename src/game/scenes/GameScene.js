@@ -26,7 +26,7 @@ export default class GameScene extends Phaser.Scene {
     this.player = new Player(this, this.level.spawn.x, this.level.spawn.y, this.settings); this.physics.add.collider(this.player, this.platforms);
     this.fallingRocks = this.environment ? new FallingRocks(this, this.level.environment.hazards ?? [], this.environment) : null;
     this.player.on('damage', () => { this.publish(); this.tone(150); this.effects.shake(100, 0.004); });
-    this.player.on('attack', () => { this.tone(330); this.effects.sword(this.player); });
+    this.player.on('attack', () => this.tone(330));
     this.player.on('death-complete', () => this.finish(false));
     this.physics.add.collider(this.player, this.objects.crates);
     this.physics.add.overlap(this.player, this.objects.spikes, () => this.player.takeDamage());
@@ -41,7 +41,7 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.overlap(this.player, this.objects.gate, () => { if (!this.player.dead) this.finish(true); });
     this.coins = this.physics.add.staticGroup();
     this.level.coins.forEach(([x, y]) => { const coin = this.coins.create(x, y, 'coin'); this.effects.coin(coin); });
-    this.physics.add.overlap(this.player, this.coins, (_player, coin) => { this.effects.burst(coin.x, coin.y); coin.destroy(); this.coinsCollected++; this.tone(760); this.publish(); });
+    this.physics.add.overlap(this.player, this.coins, (_player, coin) => { if (this.player.dead) return; this.effects.burst(coin.x, coin.y); coin.destroy(); this.coinsCollected++; this.tone(760); this.publish(); });
     this.enemies = this.physics.add.group();
     this.level.enemies.forEach(config => {
       const enemy = createEnemy(this, config);

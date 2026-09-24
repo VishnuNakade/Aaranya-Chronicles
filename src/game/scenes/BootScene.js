@@ -1,10 +1,12 @@
 import Phaser from 'phaser';
 import { preloadEnvironment } from '../environment/assets';
-import { createVeerAnimations } from '../art/veerAnimations';
+import { createVeerAnimations, preloadVeer } from '../art/veerAnimations';
 import { createGuardianTextures } from '../art/guardianTextures';
 export default class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
   preload() {
+    this.load.maxParallelDownloads = 4;
+    preloadVeer(this);
     const level = this.registry.get('level');
     if (level.environment) preloadEnvironment(this, level.environment);
     else this.load.image('forest', '/assets/forest.png');

@@ -11,7 +11,7 @@ test('bounded effects, floating pickups, pause, reduced motion and restart clean
     s.player.attack();
     s.effects.checkpoint(s.objects.checkpoints.getChildren()[0]);
     s.setPaused(true);
-    return { floating, particles: s.effects.particles.filter(p => p.visible).length, slash: s.effects.slash.visible, alpha: s.effects.particles[0].alpha };
+    return { floating, particles: s.effects.particles.filter(p => p.visible).length, slash: s.player.anims.currentAnim?.key === 'veer-attack', alpha: s.effects.particles[0].alpha };
   });
   expect(state).toMatchObject({ floating: true, particles: 24, slash: true });
   await page.waitForTimeout(400);

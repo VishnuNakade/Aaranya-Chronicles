@@ -122,6 +122,8 @@ The supplied reference was treated as visual inspiration, not as instructions. P
 
 ## Game Feel
 
+Veer now uses all 55 supplied animation PNGs via a compact generated atlas. See [Veer animation configuration and repacking](src/assets/veer-animation-assets/README.md). Idle/run/jump/fall/attack/hurt/death are registered separately, double jump replays ascent, and sword damage is limited to swing frames 3-6. Original source images and player movement/combat values are preserved.
+
 `src/game/effects/GameEffects.js` owns a reusable pool of 24 spark sprites and one sword arc. Coin pickups and enemy hits reuse these sprites; excess particles are skipped. Effects have short lifetimes, no physics bodies and no continuous emitters. Floating coins use one tween each with synchronized pickup bodies; dropped coins use the same animation. Checkpoints pulse once, and combat shakes are brief and cannot continually restart an active shake.
 
 `BootScene.js` generates the tiny effect textures once. `GameScene.js` connects events to effects and adjusts camera interpolation to elapsed frame time. Scene pause freezes all Phaser effects; restart discards the scene-owned pool. Changing Reduced Motion clears active sparks, slash, shake and checkpoint pulses and stops coin bobbing immediately.
