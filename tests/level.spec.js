@@ -46,12 +46,14 @@ test('Meadow checkpoints, hazards, crates, gate and restart', async ({ page }) =
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.respawn(2040, 480); s.player.facing = 1; });
   await page.waitForTimeout(250);
   await page.keyboard.press('Space');
-  await page.waitForFunction(() => window.__AARANYA_GAME__.scene.getScene('GameScene').objects.crates.getLength() === 1);
+  await page.waitForFunction(() => window.__AARANYA_GAME__.scene.getScene('GameScene').objects.crates.getChildren().some(crate => crate.state === 'plant'));
+  await page.keyboard.press('Space');
+  await page.waitForFunction(() => window.__AARANYA_GAME__.scene.getScene('GameScene').healing.charges === 1);
   expect(await page.evaluate(() => window.__AARANYA_GAME__.scene.getScene('GameScene').finished)).toBe(false);
   await page.screenshot({ path: 'test-results/meadow-gate.png' });
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.respawn(s.level.exit.x, s.level.exit.y); });
   await expect(page.getByRole('heading', { name: 'LEVEL COMPLETE' })).toBeVisible();
   await page.getByRole('button', { name: 'Replay' }).click();
   await expect(page.getByRole('progressbar', { name: 'Life', exact: true })).toHaveAttribute('value', '3');
-  expect(await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); return [s.checkpointIndex, s.objects.crates.getLength(), s.physics.world.bounds.width, s.cameras.main.getBounds().width]; })).toEqual([-1, 2, levels['1-1'].width, levels['1-1'].width]);
+  expect(await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); return [s.checkpointIndex, s.objects.crates.getLength(), s.physics.world.bounds.width, s.cameras.main.getBounds().width]; })).toEqual([-1, levels['1-1'].crates.length - 1, levels['1-1'].width, levels['1-1'].width]);
 });

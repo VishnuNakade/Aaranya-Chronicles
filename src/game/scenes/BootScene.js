@@ -3,11 +3,13 @@ import { preloadEnvironment } from '../environment/assets';
 import { createVeerAnimations, preloadVeer } from '../art/veerAnimations';
 import { createGuardianTextures } from '../art/guardianTextures';
 import { preloadEnemy, createEnemyAnimations } from '../art/enemyAnimations';
+import { preloadHealth, createHealthAnimations } from '../art/healthAnimations';
 export default class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
   preload() {
     this.load.maxParallelDownloads = 4;
     preloadVeer(this);
+    preloadHealth(this);
     preloadEnemy(this);
     const level = this.registry.get('level');
     if (level.environment) preloadEnvironment(this, level.environment);
@@ -15,6 +17,7 @@ export default class BootScene extends Phaser.Scene {
   }
   create() {
     createVeerAnimations(this);
+    createHealthAnimations(this);
     createEnemyAnimations(this);
     createGuardianTextures(this);
     const g = this.make.graphics({ x: 0, y: 0 });

@@ -1,3 +1,5 @@
+import HealthCrate from '../items/HealthCrate';
+import { cratePlacement } from '../items/cratePlacement';
 // Geometry uses top-left x/y/width/height; interactive objects use center x/y.
 export function buildLevel(scene, level) {
   const solids = scene.physics.add.staticGroup();
@@ -25,12 +27,10 @@ export function buildLevel(scene, level) {
     }
   }
   const crates = scene.physics.add.staticGroup();
-  for (const config of level.crates ?? []) {
-    const crate = scene.add.rectangle(config.x, config.y, 48, 48, 0xa87b49).setStrokeStyle(3, 0xead099);
-    const braces = scene.add.graphics().lineStyle(4, 0xead099);
-    braces.lineBetween(config.x - 18, config.y - 18, config.x + 18, config.y + 18);
-    braces.lineBetween(config.x - 18, config.y + 18, config.x + 18, config.y - 18);
-    crate.once('destroy', () => braces.destroy());
+  for (const [index, config] of (level.crates ?? []).entries()) {
+    const id = `${level.id}:${config.id ?? index}`;
+    if (scene.healing.harvested.has(id)) continue;
+    const crate = new HealthCrate(scene, cratePlacement(level, config), id);
     crates.add(crate);
   }
   const checkpoints = scene.physics.add.staticGroup();

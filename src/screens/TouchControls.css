@@ -11,9 +11,16 @@
   -webkit-user-select: none;
 }
 .touch-controls .artwork-control img { display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.healing-control { position: absolute; right: 24px; bottom: 118px; width: 64px; height: 64px; padding: 0; background: transparent; border: 0; border-radius: 50%; touch-action: manipulation; }
+.healing-control img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.healing-control.charged { filter: drop-shadow(0 0 5px #90e740); }
+.healing-control:disabled { filter: grayscale(0.9); opacity: 0.5; cursor: default; }
+.healing-control:active:not(:disabled) { transform: scale(0.95); }
+.healing-count { position: absolute; bottom: 0; right: 0; min-width: 20px; padding: 2px 4px; border-radius: 4px; background: #12291b; color: #e6ffc0; font-size: 12px; font-variant-numeric: tabular-nums; border: 1px solid #b6ce73; }
 .touch-controls .artwork-control:hover { background: transparent; filter: brightness(1.12); }
 .touch-controls .artwork-control:active { background: transparent; filter: brightness(1.2); }
 @media (max-width: 600px), (max-height: 500px) {
+  .healing-control { width: 52px; height: 52px; right: 14px; bottom: 88px; }
   .touch-controls .artwork-control { width: 64px; height: 64px; }
   .touch-controls > div { gap: 8px; }
 }

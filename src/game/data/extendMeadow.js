@@ -12,6 +12,9 @@ export function extendMeadow(level, chapter) {
     level.enemies.push({ type: 'enemy1', x: x + 370, y: 470, min: x + 280, max: x + 435 });
     level.spikes.push([x + 205, 490, 48 + Math.min(chapter - 1, 3) * 8, 20]);
     level.checkpoints.push({ id: `sanctuary-${i}`, x: x + 40, y: 465, spawn: { x: x + 40, y: 460 } });
+    level.crates.push(i % 2 === 0
+      ? { id: `healing-sanctuary-${i}`, x: x + 200, platform: level.platforms.length - 2, y: 376 }
+      : { id: `healing-sanctuary-${i}`, x: x + 80, y: 486 });
     if (i % 2 === 1) level.fallingRocks.push({ type: 'fallingRock', asset: 'fallingRock', x: x + 270, y: 110, size: 28,
       warningMs: Math.max(900, 1300 - chapter * 50), triggerRadius: 100, speed: 230, cooldownMs: 3200, impactY: 503 });
     end = x + 480;

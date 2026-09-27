@@ -8,6 +8,8 @@ import { createEnemy } from '../entities/createEnemy';
 import { buildLevel } from '../level/buildLevel';
 import { getCoinTotal, getEnemyTotal } from '../data/levels';
 import { calculateStars } from '../results';
+import HealingInventory from '../items/HealingInventory';
+import { healingEffect } from '../items/HealthCrate';
 export default class GameScene extends Phaser.Scene {
   constructor() { super('GameScene'); }
   create() {
@@ -20,6 +22,7 @@ export default class GameScene extends Phaser.Scene {
     this.environment = this.level.environment ? new EnvironmentRenderer(this, this.level) : null;
     if (!this.environment && this.textures.exists(this.level.background)) this.add.image(480, 270, this.level.background).setDisplaySize(960, 640).setScrollFactor(0).setAlpha(0.72);
     if (!this.environment) this.add.rectangle(480, 270, 960, 540, 0xb0dcc9, 0.14).setScrollFactor(0);
+    this.healing = new HealingInventory();
     this.objects = buildLevel(this, this.level);
     this.platforms = this.objects.solids;
     this.effects = new GameEffects(this);
@@ -67,6 +70,7 @@ export default class GameScene extends Phaser.Scene {
       if (event.repeat || this.paused || this.finished) return;
       if (['ArrowUp', 'KeyW'].includes(event.code)) this.pending.jump = true;
       if (event.code === 'Space') this.pending.attack = true;
+      if (event.code === 'KeyH') this.pending.heal = true;
     };
     this.input.keyboard.on('keydown', queueKey);
     const offInput = this.bridge.on('input', ({ action, down }) => {
@@ -75,6 +79,7 @@ export default class GameScene extends Phaser.Scene {
       this.touch[action] = down;
     });
     const offPause = this.bridge.on('pause', paused => this.setPaused(paused));
+    const offHeal = this.bridge.on('heal', () => this.tryHeal());
     const offRestart = this.bridge.on('restart', () => this.scene.restart());
     const offSettings = this.bridge.on('settings', settings => {
       this.settings = settings; this.player.reducedMotion = settings.reducedMotion;
@@ -84,7 +89,7 @@ export default class GameScene extends Phaser.Scene {
     this.blur = () => this.setPaused(true);
     this.game.events.on(Phaser.Core.Events.BLUR, this.blur);
     this.game.events.on(Phaser.Core.Events.HIDDEN, this.blur);
-    this.events.once('shutdown', () => { offInput(); offPause(); offRestart(); offSettings(); this.input.keyboard.off('keydown', queueKey); this.game.events.off(Phaser.Core.Events.BLUR, this.blur); this.game.events.off(Phaser.Core.Events.HIDDEN, this.blur); });
+    this.events.once('shutdown', () => { offInput(); offPause(); offHeal(); offRestart(); offSettings(); this.input.keyboard.off('keydown', queueKey); this.game.events.off(Phaser.Core.Events.BLUR, this.blur); this.game.events.off(Phaser.Core.Events.HIDDEN, this.blur); });
     this.publish(); this.bridge.emit('ready');
   }
   setPaused(value) {
@@ -95,7 +100,13 @@ export default class GameScene extends Phaser.Scene {
     else { if (!this.victory) this.physics.resume(); this.cameras.main.startFollow(this.player, true, 0.09, 0.09, this.level.camera?.offsetX ?? 0, this.level.camera?.offsetY ?? 0); this.sys.resume(); }
     this.bridge.emit('paused', value);
   }
-  publish() { this.bridge.emit('hud', { health: this.player.health, maxHealth: this.player.maxHealth, posture: this.player.posture.value, coins: this.coinsCollected }); }
+  publish() { this.bridge.emit('hud', { health: this.player.health, maxHealth: this.player.maxHealth, posture: this.player.posture.value, coins: this.coinsCollected, healingCharges: this.healing.charges }); }
+  tryHeal() {
+    if (this.paused || this.finished || this.victory || !this.player || this.player.dead) return false;
+    if (!this.healing.use(this.player)) return false;
+    healingEffect(this, this.player.x, this.player.body.bottom);
+    this.publish(); this.tone(880); return true;
+  }
   tone(frequency) {
     if (!this.settings.sound || !this.sound.context) return;
     const context = this.sound.context;
@@ -128,6 +139,7 @@ export default class GameScene extends Phaser.Scene {
     const follow = 1 - Math.pow(1 - 0.09, Math.min(delta, 50) / (1000 / 60));
     this.cameras.main.setLerp(follow, follow);
     this.elapsedMs += delta;
+    if (this.pending.heal) this.tryHeal();
     this.player.update({ left: this.keys.LEFT.isDown || this.keys.A.isDown || this.touch.left, right: this.keys.RIGHT.isDown || this.keys.D.isDown || this.touch.right, ...this.pending }, delta);
     this.pending = {};
     if (this.player.dead) { this.enemies.setVelocityX(0); return; }
@@ -137,7 +149,7 @@ export default class GameScene extends Phaser.Scene {
       if (this.boss.vulnerable && this.player.hitEnemy(this.boss)) this.boss.takeDamage(1, this.player.x);
     }
     this.enemies.getChildren().slice().forEach(enemy => { enemy.update(this.player, delta); if (enemy.active && !enemy.dead && this.player.hitEnemy(enemy)) enemy.takeDamage(1, this.player.x); });
-    this.objects.crates.getChildren().slice().forEach(crate => { if (this.player.hitEnemy(crate)) { crate.destroy(); this.tone(220); } });
+    this.objects.crates.getChildren().slice().forEach(crate => { if (crate.hittable && this.player.hitEnemy(crate)) { crate.hit(); this.tone(220); } });
     if (this.player.y > this.killY) { this.player.takeDamage(); this.player.respawn(this.respawnPoint.x, this.respawnPoint.y); this.cameras.main.centerOn(this.respawnPoint.x, this.respawnPoint.y); }
   }
 }
