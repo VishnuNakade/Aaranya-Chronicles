@@ -27,7 +27,7 @@ export default class Raider extends Phaser.Physics.Arcade.Sprite {
   update(player, delta) {
     this.elapsed += delta;
     if (this.dead) {
-      if (!this.deathUntil && (this.body.blocked.down || this.y > this.scene.killY)) { this.animate('death'); this.deathUntil = this.elapsed + 700; }
+      if (!this.deathUntil && ((this.body.blocked.down && this.body.velocity.y >= 0) || this.y > this.scene.killY)) { this.setVelocity(0); this.animate('death'); this.deathUntil = this.elapsed + 700; }
       if (this.deathUntil && this.elapsed >= this.deathUntil) { this.emit('coin-drop', { x: this.x, y: Math.min(this.y, 480) - 12, count: this.coinDrop }); this.destroy(); }
       return;
     }
@@ -87,13 +87,18 @@ export default class Raider extends Phaser.Physics.Arcade.Sprite {
     if (!guarded) this.health = Math.max(0, this.health - amount);
     if (!guarded || broken) {
       this.hurtUntil = this.elapsed + (broken ? 900 : 220); this.state = 'hurt'; this.animate('hurt');
-      this.setVelocity(this.x < sourceX ? -170 : 170, -180);
+      this.setVelocity(this.x < sourceX ? -170 : 170, this.body.blocked.down ? 0 : this.body.velocity.y);
     }
     this.emit('damage', this.health);
     if (!this.health) this.die();
     return true;
   }
-  die() { this.dead = true; this.state = 'death'; this.setVelocityX(0); this.healthBar.clear(); this.cue.setText(''); this.animate('fall'); this.emit('death'); }
+  die() {
+    this.dead = true; this.state = 'death';
+    // Cancel the fatal hit's upward knockback, but keep gravity and terrain collisions.
+    this.setVelocity(0, Math.max(0, this.body.velocity.y));
+    this.healthBar.clear(); this.cue.setText(''); this.animate('fall'); this.emit('death');
+  }
   // Contact alone is harmless; only the visible sword swing can deal damage.
   contact() {}
 }
