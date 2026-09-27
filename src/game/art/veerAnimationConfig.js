@@ -26,7 +26,7 @@ export const veerAnimationConfig = {
   fall: { count: 7, duration: 350, repeat: 0, anchorX: 0.57 },
   attack: { count: 9, duration: 250, repeat: 0, anchorX: 0.48,
     anchors: [0.55, 0.53, 0.43, 0.48, 0.43, 0.43, 0.57, 0.57, 0.57], activeFrames: [3, 4, 5, 6] },
-  hurt: { count: 10, duration: 220, repeat: 0, anchorX: 0.55 },
+  hurt: { count: 10, duration: 220, repeat: 0, anchorX: 0.55, alignFeet: true },
   death: { count: 7, duration: 450, repeat: 0, anchorX: 0.50 },
 };
 

@@ -13,7 +13,7 @@ for (const [state, config] of Object.entries(veerAnimationConfig)) {
   const names = (await readdir(path.join(sourceDir, state))).filter(name => /\.png$/i.test(name)).sort((a, b) => sequence(a) - sequence(b));
   if (names.length !== config.count || names.some((name, i) => sequence(name) !== i + 1)) throw new Error(`Invalid ${state} sequence`);
   for (const [index, name] of names.entries()) frames.push({ name: `veer-${state}-${index}`, path: path.join(sourceDir, state, name), anchor: config.anchors?.[index] ?? config.anchorX,
-    registration: config.registration?.[index], registeredHeight: config.registeredHeight });
+    registration: config.registration?.[index], registeredHeight: config.registeredHeight, alignFeet: config.alignFeet });
 }
 const columns = 8;
 const width = columns * veerVisual.width;
@@ -27,17 +27,29 @@ try {
   const atlasFrames = {};
   for (const [index, frame] of frames.entries()) {
     const x = index % columns * veerVisual.width; const y = Math.floor(index / columns) * veerVisual.height;
-    await page.evaluate(async ({ data, x, y, anchor, visual, registration, registeredHeight }) => {
+    await page.evaluate(async ({ data, x, y, anchor, visual, registration, registeredHeight, alignFeet }) => {
       const image = new Image(); image.src = `data:image/png;base64,${data}`; await image.decode();
       const scale = registration ? registeredHeight / (registration.footY - registration.headY) : Math.min(144 / image.width, 88 / image.height);
       const w = image.width * scale; const h = image.height * scale;
       const rootX = registration ? registration.rootX * scale : w * anchor;
-      const footY = registration ? registration.footY * scale : h * .97;
+      let sourceFoot = image.height * .97;
+      if (alignFeet) {
+        // Align visible soles, excluding transparent canvas padding.
+        const probe = document.createElement('canvas'); probe.width = image.width; probe.height = image.height;
+        const pixels = probe.getContext('2d'); pixels.drawImage(image, 0, 0);
+        const rgba = pixels.getImageData(0, 0, image.width, image.height).data;
+        outer: for (let y = image.height - 1; y >= 0; y--) {
+          for (let x = 0; x < image.width; x++) {
+            if (rgba[(y * image.width + x) * 4 + 3] >= 128) { sourceFoot = y + 1; break outer; }
+          }
+        }
+      }
+      const footY = registration ? registration.footY * scale : sourceFoot * scale;
       const ctx = window.atlas.getContext('2d'); ctx.imageSmoothingQuality = 'high';
       ctx.save(); ctx.beginPath(); ctx.rect(x, y, visual.width, visual.height); ctx.clip();
       ctx.drawImage(image, x + visual.footX - rootX, y + visual.footY - footY, w, h); ctx.restore();
     }, { data: (await readFile(frame.path)).toString('base64'), x, y, anchor: frame.anchor, visual: veerVisual,
-      registration: frame.registration, registeredHeight: frame.registeredHeight });
+      registration: frame.registration, registeredHeight: frame.registeredHeight, alignFeet: frame.alignFeet });
     atlasFrames[frame.name] = { frame: { x, y, w: veerVisual.width, h: veerVisual.height }, rotated: false, trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: veerVisual.width, h: veerVisual.height }, sourceSize: { w: veerVisual.width, h: veerVisual.height } };
   }

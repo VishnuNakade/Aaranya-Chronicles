@@ -101,7 +101,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.invincibleUntil = this.elapsed + 1300;
     this.hurtUntil = Math.max(this.elapsed + 220, this.posture.brokenUntil);
     this.attackUntil = 0;
-    this.setVelocity(this.x < sourceX ? -170 : 170, -180);
+    this.setVelocity(this.x < sourceX ? -170 : 170, this.body.blocked.down ? 0 : this.body.velocity.y);
     this.emit('damage', this.health);
     if (this.health === 0) {
       this.dead = true;
