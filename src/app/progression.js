@@ -5,11 +5,13 @@ import { stories } from '../data/stories';
 export const SAVE_KEY = 'aaranya:v1';
 const integer = (value, max) => Number.isFinite(value) ? Math.max(0, Math.min(max, Math.floor(value))) : 0;
 export function initialProgress() {
-  return { version: 2, results: {}, relics: [], unlockedLevels: [firstLevelId], seenStories: [], completed: false, bestCoins: 0, settings: { sound: true, reducedMotion: false } };
+  return { version: 2, journeyStarted: false, results: {}, relics: [], unlockedLevels: [firstLevelId], seenStories: [], completed: false, bestCoins: 0, settings: { sound: true, reducedMotion: false } };
 }
 export function normalizeProgress(data) {
   const save = initialProgress();
   if (!data || typeof data !== 'object') return save;
+  // Existing story/progression records identify returning players from older saves.
+  save.journeyStarted = data.journeyStarted === true || data.completed === true || Boolean(data.seenStories?.length) || Boolean(Object.keys(data.results ?? {}).length);
   save.seenStories = Array.isArray(data.seenStories) ? [...new Set(data.seenStories.filter(id => typeof id === 'string' && stories[id]))] : [];
   save.settings = { sound: data.settings?.sound !== false, reducedMotion: data.settings?.reducedMotion === true };
   for (const [id, record] of Object.entries(data.results ?? {})) {

@@ -13,8 +13,9 @@ export function ProgressProvider({ children }) {
     catch { setStorageError(true); }
   }, [save]);
   const setSettings = useCallback(settings => setSave(s => ({ ...s, settings })), []);
+  const beginJourney = useCallback(() => setSave(s => ({ ...s, journeyStarted: true })), []);
   const complete = useCallback(result => setSave(s => completeLevel(s, result)), []);
   const markStorySeen = useCallback(id => setSave(s => ({ ...s, seenStories: [...new Set([...s.seenStories, id])] })), []);
-  return <Context.Provider value={{ save, storageError, setSettings, complete, markStorySeen }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ save, storageError, setSettings, complete, markStorySeen, beginJourney }}>{children}</Context.Provider>;
 }
 export const useProgress = () => useContext(Context);
