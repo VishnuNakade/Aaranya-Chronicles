@@ -25,10 +25,25 @@ export default class EnemyNavigator {
   }
   update(enemy, player) {
     const body = enemy.body, grounded = body.blocked.down;
-    if (grounded) this.jumps = 0;
+    if (grounded) { this.jumps = 0; this.drop = null; }
     const from = this.surface(body), to = this.surface(player.body);
     if (grounded) this.target = from && to && from !== to ? this.route(from, to) : null;
     const target = this.target;
+    if (grounded && from && target && target.y > from.y + 28) {
+      const edges = [from.x - body.halfWidth - 14, from.x + from.width + body.halfWidth + 14]
+        .filter(x => x >= target.x + body.halfWidth && x <= target.x + target.width - body.halfWidth)
+        .sort((a, b) => Math.abs(a - player.x) - Math.abs(b - player.x));
+      if (edges.length) this.drop = { x: edges[0], top: from.y, target };
+    }
+    if (this.drop) {
+      // Clear the old platform completely before steering back toward Veer.
+      const aim = body.top <= this.drop.top + 24 ? this.drop.x
+        : Math.max(this.drop.target.x + 18, Math.min(this.drop.target.x + this.drop.target.width - 18, player.x));
+      const direction = Math.sign(aim - enemy.x);
+      if (direction) { enemy.direction = direction; enemy.setFlipX(direction < 0); }
+      enemy.setVelocityX(Math.abs(aim - enemy.x) < 4 ? 0 : direction * stats.speed);
+      return;
+    }
     let aim = player.x - (Math.sign(player.x - enemy.x) || enemy.direction) * 48;
     if (target) {
       aim = Math.max(target.x + 18, Math.min(target.x + target.width - 18, enemy.x));
