@@ -36,14 +36,8 @@ export default class GameEffects {
     this.scene.tweens.add({ targets: coin, y: y - 6, duration: 850, delay: Math.abs(coin.x % 400), yoyo: true, repeat: -1,
       ease: 'Sine.easeInOut', onUpdate: () => { if (coin.active) coin.refreshBody(); } });
   }
-  checkpoint(checkpoint) {
-    const flag = checkpoint.getData('flag');
-    this.burst(flag.x, flag.y, 0xbce8a1, 12);
-    if (!this.scene.settings.reducedMotion) this.scene.tweens.add({ targets: flag, scaleX: 1.25, scaleY: 1.25, duration: 180, yoyo: true, repeat: 1 });
-  }
   clear() {
     [...this.particles, this.slash].forEach(p => { this.scene.tweens.killTweensOf(p); p.setVisible(false); });
-    this.scene.objects.checkpoints.getChildren().forEach(c => { const flag = c.getData('flag'); this.scene.tweens.killTweensOf(flag); flag.setScale(1); });
     this.scene.cameras.main.shakeEffect.reset();
   }
 }

@@ -35,8 +35,6 @@ export default class GameScene extends Phaser.Scene {
       if (this.player.dead || checkpoint.getData('index') <= this.checkpointIndex) return;
       this.checkpointIndex = checkpoint.getData('index');
       this.respawnPoint = { ...checkpoint.getData('config').spawn };
-      checkpoint.getData('flag').setFillStyle(0xf0cb73);
-      this.effects.checkpoint(checkpoint); this.tone(920);
       this.bridge.emit('checkpoint', checkpoint.getData('config').id);
     });
     this.physics.add.overlap(this.player, this.objects.gate, () => { if (!this.player.dead) this.finish(true); });

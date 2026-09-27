@@ -36,9 +36,7 @@ export function buildLevel(scene, level) {
   const checkpoints = scene.physics.add.staticGroup();
   for (const [index, config] of (level.checkpoints ?? []).entries()) {
     const zone = scene.add.zone(config.x, config.y, 42, 90);
-    scene.add.rectangle(config.x, config.y, 5, 90, 0xe2d4a7);
-    const flag = scene.add.triangle(config.x + 20, config.y - 27, 0, 0, 32, 10, 0, 22, 0x849389);
-    zone.setData({ config, index, flag });
+    zone.setData({ config, index });
     checkpoints.add(zone);
   }
   const exit = level.exit;
