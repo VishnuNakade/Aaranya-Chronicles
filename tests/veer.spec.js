@@ -53,7 +53,7 @@ test('Veer jump limit, facing, attack cooldown, invincibility, pause and death',
   expect(await page.evaluate(() => window.__AARANYA_GAME__.scene.getScene('GameScene').player.attack())).toBe(false);
   await expect(page.getByRole('heading', { name: 'Game Over' })).toBeVisible();
   await page.getByRole('button', { name: 'Retry' }).click();
-  await expect(page.getByLabel('3 hearts')).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Life', exact: true })).toHaveAttribute('value', '3');
   expect((await read(page)).dead).toBe(false);
 });
 

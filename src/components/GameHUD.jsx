@@ -1,13 +1,14 @@
-import { Coins, Heart, Pause, Leaf } from 'lucide-react';
+import { Coins, Pause, Leaf } from 'lucide-react';
 import './GameHUD.css';
 
-export default function GameHUD({ health, coins, totalCoins, level, onPause, inactive }) {
+export default function GameHUD({ health, maxHealth = 3, posture = 100, coins, totalCoins, level, onPause, inactive }) {
   return <div className="fantasy-hud" role="region" aria-label="Game status">
     <div className="hud-vitals">
       <span className="hud-emblem" aria-hidden="true"><Leaf size={22} /></span>
-      <div><span className="hud-caption">VEER</span><span className="hearts" role="status" aria-label={`${health} hearts`}>
-        {[1, 2, 3].map(n => <Heart key={n} size={25} aria-hidden="true" className={n <= health ? 'heart-full' : 'heart-empty'} />)}
-      </span></div>
+      <div className="hud-bars"><span className="hud-caption">VEER</span>
+        <label>Life<progress aria-label="Life" max={maxHealth} value={health} /></label>
+        <label>Posture<progress className="posture-meter" aria-label="Posture" max={100} value={posture} /></label>
+      </div>
     </div>
     <div className="hud-level" aria-label={`Level ${level.id}: ${level.name}`}>
       <span className="hud-caption">{level.worldName}</span>

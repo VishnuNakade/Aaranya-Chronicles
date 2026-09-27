@@ -26,7 +26,7 @@ test('results persist, unlock next level, preserve best run and support navigati
     await page.screenshot({ path: `test-results/results-${name}.png` });
   }
   await page.getByRole('button', { name: 'Replay', exact: true }).click();
-  await expect(page.getByLabel('3 hearts')).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Life', exact: true })).toHaveAttribute('value', '3');
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.respawn(s.level.exit.x, s.level.exit.y); });
   await expect(page.getByRole('img', { name: '1 of 3 stars' })).toBeVisible();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('aaranya:v1')).results['1-1'].lastRun.stars)).toBe(1);

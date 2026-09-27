@@ -17,7 +17,7 @@ export const levels = {
     ground: [[0, 510, 650, 90], [760, 510, 600, 90], [1460, 510, 940, 90]],
     platforms: [[260, 410, 140, 24], [470, 325, 140, 24], [860, 410, 150, 24], [1130, 335, 150, 24], [1600, 400, 150, 24], [1830, 320, 150, 24]],
     coins: [[300, 372], [365, 372], [525, 287], [690, 400], [920, 372], [1190, 297], [1405, 405], [1885, 282]],
-    enemies: [{ type: 'slime', x: 1040, y: 470, min: 1020, max: 1290 }, { type: 'goblin', x: 1900, y: 470, min: 1780, max: 2070 }],
+    enemies: [{ type: 'enemy1', x: 1040, y: 470, min: 1020, max: 1290 }, { type: 'enemy1', x: 1900, y: 470, min: 1780, max: 2070 }],
     checkpoints: [{ id: 'riverbank', x: 810, y: 465, spawn: { x: 810, y: 460 } }, { id: 'meadow', x: 1520, y: 465, spawn: { x: 1520, y: 460 } }],
     spikes: [[1690, 490, 72, 20]],
     crates: [{ x: 420, y: 486 }, { x: 2090, y: 486 }],
@@ -35,7 +35,7 @@ for (let i = 0; i < meadowNames.length; i++) {
     levels[id] = { ...base, id, name: meadowNames[i],
       platforms: base.platforms.map(([x, y, w, h]) => [x, y - rise, w, h]),
       coins: base.coins.map(([x, y]) => [x, y - rise]),
-      enemies: base.enemies.map((enemy, n) => ({ ...enemy, type: (i + n) % 2 ? 'goblin' : 'slime' })),
+      enemies: base.enemies.map(enemy => ({ ...enemy })),
       crates: [{ x: 420 + i * 8, y: 486 }, { x: 2110 + i * 5, y: 486 }],
     };
   }
@@ -63,3 +63,9 @@ for (const level of Object.values(levels)) {
     level.environment = meadowEnvironment(level);
   }
 }
+levels['1-1'].enemies = [
+  { type: 'enemy1', x: 1040, y: 470, min: 960, max: 1290, encounter: 'river-pair' },
+  { type: 'enemy1', x: 1210, y: 470, min: 960, max: 1290, encounter: 'river-pair' },
+  { type: 'enemy1', x: 1900, y: 470, min: 1780, max: 2220, encounter: 'ruins-pair' },
+  { type: 'enemy1', x: 2150, y: 470, min: 1780, max: 2220, encounter: 'ruins-pair' },
+];

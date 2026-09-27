@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { veerVisual, swordFrameActive, veerLanding } from '../art/veerAnimationConfig';
+import Posture from '../combat/Posture';
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, { reducedMotion = false } = {}) {
@@ -12,6 +13,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
     this.maxHealth = 3;
     this.health = this.maxHealth;
+    this.posture = new Posture();
     this.facing = 1;
     this.state = 'idle';
     this.dead = false;
@@ -42,6 +44,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       return;
     }
     const grounded = this.body.blocked.down && this.body.velocity.y >= 0;
+    const previousPosture = Math.floor(this.posture.value);
+    this.posture.update(this.elapsed, delta);
+    if (previousPosture !== Math.floor(this.posture.value)) this.emit('vitals');
     if (grounded && this.wasGrounded === false && this.hasLanded) this.landingUntil = this.elapsed + veerLanding.duration;
     if (grounded) this.hasLanded = true;
     this.wasGrounded = grounded;
@@ -84,7 +89,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   hitEnemy(enemy) {
     if (this.dead || this.elapsed >= this.attackUntil || !swordFrameActive(this) || !enemy.active || this.hitTargets.has(enemy)) return false;
     const hitbox = new Phaser.Geom.Rectangle(this.facing > 0 ? this.x + 8 : this.x - 76, this.y - 28, 68, 56);
-    if (!Phaser.Geom.Intersects.RectangleToRectangle(hitbox, enemy.getBounds())) return false;
+    if (!Phaser.Geom.Intersects.RectangleToRectangle(hitbox, enemy.body ?? enemy.getBounds())) return false;
     this.hitTargets.add(enemy);
     return true;
   }
@@ -92,8 +97,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   takeDamage(sourceX = this.x - this.facing * 20) {
     if (this.dead || this.elapsed < this.invincibleUntil) return false;
     this.health = Math.max(0, this.health - 1);
+    this.damagePosture(40);
     this.invincibleUntil = this.elapsed + 1300;
-    this.hurtUntil = this.elapsed + 220;
+    this.hurtUntil = Math.max(this.elapsed + 220, this.posture.brokenUntil);
     this.attackUntil = 0;
     this.setVelocity(this.x < sourceX ? -170 : 170, -180);
     this.emit('damage', this.health);
@@ -112,6 +118,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.deathUntil = this.elapsed + 450;
     this.setVelocity(0);
     this.setState('death');
+  }
+
+  damagePosture(amount) {
+    if (this.dead) return;
+    if (this.posture.damage(amount, this.elapsed)) {
+      this.hurtUntil = this.posture.brokenUntil;
+      this.attackUntil = 0;
+      this.setVelocityX(0);
+      this.setState('hurt');
+    }
+    this.emit('vitals');
   }
 
   respawn(x, y) {

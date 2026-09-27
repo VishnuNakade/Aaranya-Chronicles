@@ -9,7 +9,7 @@ export function extendMeadow(level, chapter) {
     level.ground.push([x, 510, 480, 90]);
     level.platforms.push([x + 110, 400, 120, 24], [x + 310, 320, 110, 24]);
     level.coins.push([end + gap / 2, 410], [x + 150, 362], [x + 350, 282]);
-    level.enemies.push({ type: i % 2 ? 'goblin' : 'slime', x: x + 370, y: 470, min: x + 280, max: x + 435 });
+    level.enemies.push({ type: 'enemy1', x: x + 370, y: 470, min: x + 280, max: x + 435 });
     level.spikes.push([x + 205, 490, 48 + Math.min(chapter - 1, 3) * 8, 20]);
     level.checkpoints.push({ id: `sanctuary-${i}`, x: x + 40, y: 465, spawn: { x: x + 40, y: 460 } });
     if (i % 2 === 1) level.fallingRocks.push({ type: 'fallingRock', asset: 'fallingRock', x: x + 270, y: 110, size: 28,

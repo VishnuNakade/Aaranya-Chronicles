@@ -26,6 +26,7 @@ export default class GameScene extends Phaser.Scene {
     this.player = new Player(this, this.level.spawn.x, this.level.spawn.y, this.settings); this.physics.add.collider(this.player, this.platforms);
     this.fallingRocks = this.environment ? new FallingRocks(this, this.level.environment.hazards ?? [], this.environment) : null;
     this.player.on('damage', () => { this.publish(); this.tone(150); this.effects.shake(100, 0.004); });
+    this.player.on('vitals', () => this.publish());
     this.player.on('attack', () => this.tone(330));
     this.player.on('death-complete', () => this.finish(false));
     this.physics.add.collider(this.player, this.objects.crates);
@@ -96,7 +97,7 @@ export default class GameScene extends Phaser.Scene {
     else { if (!this.victory) this.physics.resume(); this.cameras.main.startFollow(this.player, true, 0.09, 0.09, this.level.camera?.offsetX ?? 0, this.level.camera?.offsetY ?? 0); this.sys.resume(); }
     this.bridge.emit('paused', value);
   }
-  publish() { this.bridge.emit('hud', { health: this.player.health, coins: this.coinsCollected }); }
+  publish() { this.bridge.emit('hud', { health: this.player.health, maxHealth: this.player.maxHealth, posture: this.player.posture.value, coins: this.coinsCollected }); }
   tone(frequency) {
     if (!this.settings.sound || !this.sound.context) return;
     const context = this.sound.context;

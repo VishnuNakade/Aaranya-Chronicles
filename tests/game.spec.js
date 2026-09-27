@@ -43,13 +43,13 @@ test('movement, jump, coins, combat, damage, completion and cleanup', async ({ p
   await page.waitForFunction(() => window.__AARANYA_GAME__.scene.getScene('GameScene').enemies.getLength() === 1);
   await page.waitForFunction(() => { const p = window.__AARANYA_GAME__.scene.getScene('GameScene').player; return p.elapsed >= p.attackUntil; });
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); const enemy = s.enemies.getChildren()[0]; s.player.setPosition(enemy.x, enemy.y); });
-  await expect(page.getByLabel('2 hearts')).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Life', exact: true })).toHaveAttribute('value', '2');
   await page.getByRole('button', { name: 'Pause', exact: true }).click(); await expect(page.getByRole('dialog')).toBeVisible();
   await page.getByRole('button', { name: 'Resume', exact: true }).click();
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.setPosition(s.level.exit.x, s.level.exit.y); });
   await expect(page.getByRole('heading', { name: 'LEVEL COMPLETE' })).toBeVisible();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('aaranya:v1')).completed)).toBe(true);
-  await page.getByRole('button', { name: 'Replay' }).click(); await expect(page.getByLabel('3 hearts')).toBeVisible();
+  await page.getByRole('button', { name: 'Replay' }).click(); await expect(page.getByRole('progressbar', { name: 'Life', exact: true })).toHaveAttribute('value', '3');
   await page.screenshot({ path: 'test-results/game-desktop.png' });
   await page.getByRole('link', { name: 'Leave level' }).click(); await expect(page.locator('canvas')).toHaveCount(0);
   await ready(page); await expect(page.locator('canvas')).toHaveCount(1);

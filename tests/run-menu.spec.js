@@ -34,7 +34,7 @@ test('pause freezes all scene systems; settings preserves the run; resume and re
   await page.screenshot({path:'test-results/pause-mobile.png'});
   await page.getByRole('button',{name:'Restart',exact:true}).click();
   await page.waitForFunction(()=>{const s=window.__AARANYA_GAME__.scene.getScene('GameScene');return s.player!==window.testOriginalPlayer && s.sys.isActive();});
-  await expect(page.getByLabel('3 hearts')).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Life', exact: true })).toHaveAttribute('value', '3');
   await page.getByRole('button',{name:'Pause',exact:true}).click();
   await page.getByRole('link',{name:'Exit to Menu'}).click();
   await expect(page.locator('canvas')).toHaveCount(0);
@@ -49,7 +49,7 @@ test('game over freezes scene; retry resets run; map exit cleans up', async ({ p
   await page.setViewportSize({width:844,height:390});
   await page.screenshot({path:'test-results/game-over-landscape.png'});
   await page.getByRole('button',{name:'Retry',exact:true}).click();
-  await expect(page.getByLabel('3 hearts')).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Life', exact: true })).toHaveAttribute('value', '3');
   await expect(page.locator('canvas')).toHaveCount(1);
   expect(await page.evaluate(()=>window.__AARANYA_GAME__.scene.getScene('GameScene').coinsCollected)).toBe(0);
   await die();

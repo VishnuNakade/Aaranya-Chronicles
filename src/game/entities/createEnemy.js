@@ -1,6 +1,5 @@
-import Slime from './Slime';
-import Goblin from './Goblin';
-const types = { slime: Slime, goblin: Goblin };
+import Raider from './Raider';
+const types = { enemy1: Raider };
 export function createEnemy(scene, config) {
   const Type = types[config.type];
   if (!Type) throw new Error(`Unknown enemy type: ${config.type}`);

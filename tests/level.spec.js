@@ -33,7 +33,7 @@ test('Meadow checkpoints, hazards, crates, gate and restart', async ({ page }) =
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.respawn(810, 465); });
   await page.waitForFunction(() => window.__AARANYA_GAME__.scene.getScene('GameScene').checkpointIndex === 0);
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.respawn(700, s.killY + 10); });
-  await expect(page.getByLabel('2 hearts')).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Life', exact: true })).toHaveAttribute('value', '2');
   expect(await page.evaluate(() => Math.abs(window.__AARANYA_GAME__.scene.getScene('GameScene').player.x - 810))).toBeLessThan(10);
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.respawn(1520, 465); });
   await page.waitForFunction(() => window.__AARANYA_GAME__.scene.getScene('GameScene').checkpointIndex === 1);
@@ -42,7 +42,7 @@ test('Meadow checkpoints, hazards, crates, gate and restart', async ({ page }) =
   expect(await page.evaluate(() => window.__AARANYA_GAME__.scene.getScene('GameScene').respawnPoint.x)).toBe(1520);
   await page.waitForFunction(() => { const p = window.__AARANYA_GAME__.scene.getScene('GameScene').player; return p.elapsed >= p.invincibleUntil; });
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.respawn(1725, 485); });
-  await expect(page.getByLabel('1 hearts')).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Life', exact: true })).toHaveAttribute('value', '1');
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.respawn(2040, 480); s.player.facing = 1; });
   await page.waitForTimeout(250);
   await page.keyboard.press('Space');
@@ -52,6 +52,6 @@ test('Meadow checkpoints, hazards, crates, gate and restart', async ({ page }) =
   await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); s.player.respawn(s.level.exit.x, s.level.exit.y); });
   await expect(page.getByRole('heading', { name: 'LEVEL COMPLETE' })).toBeVisible();
   await page.getByRole('button', { name: 'Replay' }).click();
-  await expect(page.getByLabel('3 hearts')).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Life', exact: true })).toHaveAttribute('value', '3');
   expect(await page.evaluate(() => { const s = window.__AARANYA_GAME__.scene.getScene('GameScene'); return [s.checkpointIndex, s.objects.crates.getLength(), s.physics.world.bounds.width, s.cameras.main.getBounds().width]; })).toEqual([-1, 2, levels['1-1'].width, levels['1-1'].width]);
 });
