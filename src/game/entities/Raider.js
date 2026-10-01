@@ -43,7 +43,7 @@ export default class Raider extends Phaser.Physics.Arcade.Sprite {
       this.state = 'hurt'; this.animate('hurt'); this.setTint(0xffb4a0);
     } else if (this.state === 'windup') {
       this.setVelocityX(0); this.setTint(0xffcf70); this.cue.setText('!'); this.animate('idle');
-      if (this.elapsed >= this.phaseUntil) { this.state = 'attack'; this.phaseUntil = this.elapsed + stats.attackDuration; this.swingHit = false; this.play(`${this.animationPrefix}-attack`); }
+      if (this.elapsed >= this.phaseUntil) { this.state = 'attack'; this.phaseUntil = this.elapsed + stats.attackDuration; this.swingHit = false; this.play(`${this.animationPrefix}-attack`); this.emit('attack'); }
     } else if (this.state === 'attack') {
       this.setVelocityX(0);
       if (!this.swingHit && (this.profile.attackFrames ?? enemyAttackFrames).includes(this.anims.currentFrame?.index) && this.anims.currentAnim?.key === `${this.animationPrefix}-attack`) {

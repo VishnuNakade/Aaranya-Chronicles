@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { preloadAudio } from '../audio/GameAudio';
 import { preloadWarden, createWardenAnimations } from '../art/wardenAnimationConfig';
 import { preloadEnvironment } from '../environment/assets';
 import { createVeerAnimations, preloadVeer } from '../art/veerAnimations';
@@ -8,6 +9,7 @@ import { preloadHealth, createHealthAnimations } from '../art/healthAnimations';
 export default class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
   preload() {
+    preloadAudio(this);
     this.load.maxParallelDownloads = 4;
     preloadVeer(this);
     preloadHealth(this);

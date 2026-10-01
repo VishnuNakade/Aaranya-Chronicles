@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import GameAudio from '../audio/GameAudio';
 import EnvironmentRenderer from '../environment/EnvironmentRenderer';
 import FallingRocks from '../environment/FallingRocks';
 import GameEffects from '../effects/GameEffects';
@@ -37,7 +38,9 @@ export default class GameScene extends Phaser.Scene {
     this.fallingRocks = this.environment ? new FallingRocks(this, this.level.environment.hazards ?? [], this.environment) : null;
     this.player.on('damage', () => { this.publish(); this.tone(150); this.effects.shake(100, 0.004); });
     this.player.on('vitals', () => this.publish());
-    this.player.on('attack', () => this.tone(330));
+    this.audio = new GameAudio(this);
+    this.player.on('attack', () => this.audio.effect('veer-sword'));
+    this.player.on('jump', () => this.audio.effect('jump'));
     this.player.on('death-complete', () => this.finish(false));
     this.physics.add.collider(this.player, this.objects.crates);
     this.physics.add.overlap(this.player, this.objects.spikes, () => this.player.takeDamage());
@@ -58,6 +61,8 @@ export default class GameScene extends Phaser.Scene {
     this.level.enemies.forEach((config, index) => {
       if (this.defeatedEnemies.has(index)) return;
       const enemy = createEnemy(this, config);
+      enemy.on('attack', () => this.audio.effect(config.type === 'forestWarden' ? 'warden-sword' : 'enemy-sword', enemy));
+      enemy.on('jump', () => this.audio.effect('jump', enemy));
       enemy.on('damage', () => this.effects.hit(enemy));
       enemy.on('death', () => { this.enemiesDefeated++; this.defeatedEnemies.add(index); });
       enemy.on('coin-drop', ({ x, y, count }) => {
@@ -99,6 +104,7 @@ export default class GameScene extends Phaser.Scene {
     } : null }));
     const offSettings = this.bridge.on('settings', settings => {
       this.settings = settings; this.player.reducedMotion = settings.reducedMotion;
+      this.audio.update();
       this.coins.getChildren().forEach(coin => this.effects.coin(coin));
       if (settings.reducedMotion) this.effects.clear();
     });
@@ -111,6 +117,7 @@ export default class GameScene extends Phaser.Scene {
   setPaused(value) {
     if (this.finished || this.paused === value) return;
     this.paused = value; this.touch = {}; this.pending = {}; this.input.keyboard.resetKeys();
+    this.audio.pause(value);
     // Pause the entire scene: clock, camera, animations, tweens and physics stop together.
     if (value) { this.physics.pause(); this.cameras.main.stopFollow(); this.sys.pause(); }
     else { if (!this.victory) this.physics.resume(); this.cameras.main.startFollow(this.player, true, 0.09, 0.09, this.level.camera?.offsetX ?? 0, this.level.camera?.offsetY ?? 0); this.sys.resume(); }
@@ -143,6 +150,7 @@ export default class GameScene extends Phaser.Scene {
   finish(won) {
     if (this.finished || (won && this.boss && (!this.boss.dead || !this.victory))) return;
     this.failed = !won;
+    this.audio.pause(true);
     this.finished = true; this.physics.pause(); this.tweens.pauseAll(); this.player.anims.pause();
     this.enemies.getChildren().forEach(enemy => enemy.anims.pause());
     const result = { levelId: this.level.id, won, coins: this.coinsCollected, totalCoins: getCoinTotal(this.level), enemiesDefeated: this.enemiesDefeated, totalEnemies: getEnemyTotal(this.level), bossDefeated: Boolean(this.boss?.dead), relicId: this.boss?.dead ? this.level.relicId : null, timeMs: Math.round(this.elapsedMs) };
@@ -156,6 +164,7 @@ export default class GameScene extends Phaser.Scene {
     const follow = 1 - Math.pow(1 - 0.09, Math.min(delta, 50) / (1000 / 60));
     this.cameras.main.setLerp(follow, follow);
     this.elapsedMs += delta;
+    this.audio.update();
     if (this.pending.heal) this.tryHeal();
     this.player.update({ left: this.keys.LEFT.isDown || this.keys.A.isDown || this.touch.left, right: this.keys.RIGHT.isDown || this.keys.D.isDown || this.touch.right, ...this.pending }, delta);
     this.pending = {};

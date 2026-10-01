@@ -55,7 +55,7 @@ export default class EnemyNavigator {
       aim = Math.abs(enemy.x - target.x) < Math.abs(enemy.x - target.x - target.width) ? target.x - 45 : target.x + target.width + 45;
     } else if (grounded && enemy.elapsed >= this.nextJump && (target || body.blocked.left || body.blocked.right)) {
       const close = target ? Math.abs(aim - enemy.x) < 290 : true;
-      if (close) { this.launchY = body.bottom; this.landingX = aim; enemy.setVelocityY(stats.jump); this.jumps = 1; this.nextJump = enemy.elapsed + 350; }
+      if (close) { this.launchY = body.bottom; this.landingX = aim; enemy.setVelocityY(stats.jump); enemy.emit('jump'); this.jumps = 1; this.nextJump = enemy.elapsed + 350; }
     }
     const jumpingUp = target && target.y < this.launchY - 20;
     if (!grounded && this.jumps === 1 && enemy.elapsed >= this.nextJump && body.velocity.y > -120 && target) {
@@ -65,7 +65,7 @@ export default class EnemyNavigator {
       const timeLeft = discriminant < 0 ? 0 : (-v + Math.sqrt(discriminant)) / this.gravity;
       const distanceLeft = Math.max(0, Math.abs(aim - enemy.x) - 8);
       if (discriminant < 0 || distanceLeft > stats.speed * timeLeft) {
-        enemy.setVelocityY(stats.doubleJump); this.jumps = 2;
+        enemy.setVelocityY(stats.doubleJump); enemy.emit('jump'); this.jumps = 2;
       }
     }
     const direction = Math.sign(aim - enemy.x);
