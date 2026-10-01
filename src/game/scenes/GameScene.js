@@ -12,11 +12,18 @@ import HealingInventory from '../items/HealingInventory';
 import { healingEffect } from '../items/HealthCrate';
 export default class GameScene extends Phaser.Scene {
   constructor() { super('GameScene'); }
-  create() {
+  create(data = {}) {
+    const retry = data.retry;
     this.level = this.registry.get('level'); this.bridge = this.registry.get('bridge'); this.settings = this.registry.get('settings');
     this.coinsCollected = 0; this.finished = false; this.touch = {}; this.pending = {}; this.paused = false;
     this.enemiesDefeated = 0; this.elapsedMs = 0; this.boss = null; this.victory = false;
     this.respawnPoint = { ...this.level.spawn }; this.checkpointIndex = -1;
+    this.defeatedEnemies = new Set(retry?.defeatedEnemies ?? []);
+    this.failed = false;
+    if (retry) {
+      this.respawnPoint = { ...retry.respawnPoint }; this.checkpointIndex = retry.checkpointIndex;
+      this.coinsCollected = retry.coinsCollected; this.enemiesDefeated = retry.enemiesDefeated; this.elapsedMs = retry.elapsedMs;
+    }
     this.killY = this.level.killY ?? this.level.height + 50;
     this.physics.world.setBounds(0, 0, this.level.width, this.killY + 120); this.cameras.main.setBounds(0, 0, this.level.width, this.level.height);
     this.environment = this.level.environment ? new EnvironmentRenderer(this, this.level) : null;
@@ -26,7 +33,7 @@ export default class GameScene extends Phaser.Scene {
     this.objects = buildLevel(this, this.level);
     this.platforms = this.objects.solids;
     this.effects = new GameEffects(this);
-    this.player = new Player(this, this.level.spawn.x, this.level.spawn.y, this.settings); this.physics.add.collider(this.player, this.platforms);
+    this.player = new Player(this, this.respawnPoint.x, this.respawnPoint.y, this.settings); this.physics.add.collider(this.player, this.platforms);
     this.fallingRocks = this.environment ? new FallingRocks(this, this.level.environment.hazards ?? [], this.environment) : null;
     this.player.on('damage', () => { this.publish(); this.tone(150); this.effects.shake(100, 0.004); });
     this.player.on('vitals', () => this.publish());
@@ -45,13 +52,14 @@ export default class GameScene extends Phaser.Scene {
       if (!this.player.dead && !guarded) this.finish(true);
     });
     this.coins = this.physics.add.staticGroup();
-    this.level.coins.forEach(([x, y]) => { const coin = this.coins.create(x, y, 'coin'); this.effects.coin(coin); });
+    (retry?.coins ?? this.level.coins).forEach(([x, y]) => { const coin = this.coins.create(x, y, 'coin'); this.effects.coin(coin); });
     this.physics.add.overlap(this.player, this.coins, (_player, coin) => { if (this.player.dead) return; this.effects.burst(coin.x, coin.y); coin.destroy(); this.coinsCollected++; this.tone(760); this.publish(); });
     this.enemies = this.physics.add.group();
-    this.level.enemies.forEach(config => {
+    this.level.enemies.forEach((config, index) => {
+      if (this.defeatedEnemies.has(index)) return;
       const enemy = createEnemy(this, config);
       enemy.on('damage', () => this.effects.hit(enemy));
-      enemy.on('death', () => { this.enemiesDefeated++; });
+      enemy.on('death', () => { this.enemiesDefeated++; this.defeatedEnemies.add(index); });
       enemy.on('coin-drop', ({ x, y, count }) => {
         for (let i = 0; i < count; i++) this.effects.coin(this.coins.create(x + (i - (count - 1) / 2) * 26, y, 'coin').setData('bonus', true));
       });
@@ -83,7 +91,12 @@ export default class GameScene extends Phaser.Scene {
     });
     const offPause = this.bridge.on('pause', paused => this.setPaused(paused));
     const offHeal = this.bridge.on('heal', () => this.tryHeal());
-    const offRestart = this.bridge.on('restart', () => this.scene.restart());
+    const offRestart = this.bridge.on('restart', () => this.scene.restart({ retry: this.failed ? {
+      respawnPoint: this.respawnPoint, checkpointIndex: this.checkpointIndex,
+      defeatedEnemies: [...this.defeatedEnemies], enemiesDefeated: this.enemiesDefeated,
+      coinsCollected: this.coinsCollected, elapsedMs: this.elapsedMs,
+      coins: this.coins.getChildren().map(coin => [coin.x, coin.y]),
+    } : null }));
     const offSettings = this.bridge.on('settings', settings => {
       this.settings = settings; this.player.reducedMotion = settings.reducedMotion;
       this.coins.getChildren().forEach(coin => this.effects.coin(coin));
@@ -129,6 +142,7 @@ export default class GameScene extends Phaser.Scene {
   }
   finish(won) {
     if (this.finished || (won && this.boss && (!this.boss.dead || !this.victory))) return;
+    this.failed = !won;
     this.finished = true; this.physics.pause(); this.tweens.pauseAll(); this.player.anims.pause();
     this.enemies.getChildren().forEach(enemy => enemy.anims.pause());
     const result = { levelId: this.level.id, won, coins: this.coinsCollected, totalCoins: getCoinTotal(this.level), enemiesDefeated: this.enemiesDefeated, totalEnemies: getEnemyTotal(this.level), bossDefeated: Boolean(this.boss?.dead), relicId: this.boss?.dead ? this.level.relicId : null, timeMs: Math.round(this.elapsedMs) };

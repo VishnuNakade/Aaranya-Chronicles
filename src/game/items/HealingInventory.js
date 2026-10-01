@@ -5,11 +5,10 @@ export default class HealingInventory {
     try {
       const data = JSON.parse(storage.getItem(KEY));
       if (Number.isSafeInteger(data?.charges) && data.charges >= 0) this.charges = data.charges;
-      if (Array.isArray(data?.harvested)) this.harvested = new Set(data.harvested.filter(id => typeof id === 'string'));
     } catch { /* An unavailable save must not prevent gameplay. */ }
   }
   save() {
-    try { this.storage.setItem(KEY, JSON.stringify({ charges: this.charges, harvested: [...this.harvested] })); return true; }
+    try { this.storage.setItem(KEY, JSON.stringify({ charges: this.charges })); return true; }
     catch { return false; }
   }
   collect(id) {

@@ -45,7 +45,7 @@ test('two sword hits reveal and harvest the plant; all frames play; saved healin
   await page.reload();
   await page.waitForFunction(() => window.__AARANYA_GAME__?.scene.getScene('GameScene')?.player?.hasLanded);
   await expect(page.getByRole('button', { name: 'Heal (1 stored)', exact: true })).toBeEnabled();
-  expect(await page.evaluate(() => window.__AARANYA_GAME__.scene.getScene('GameScene').objects.crates.getLength())).toBe(counts.crates - 1);
+  expect(await page.evaluate(() => window.__AARANYA_GAME__.scene.getScene('GameScene').objects.crates.getLength())).toBe(counts.crates);
   await page.evaluate(() => window.__AARANYA_GAME__.scene.getScene('GameScene').player.takeDamage());
   await page.getByRole('button', { name: 'Pause', exact: true }).click();
   expect(await page.evaluate(() => window.__AARANYA_GAME__.scene.getScene('GameScene').tryHeal())).toBe(false);
