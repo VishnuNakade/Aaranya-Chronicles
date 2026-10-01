@@ -60,6 +60,7 @@ export const getEnemyTotal = level => level.enemies.length + (level.boss ? 1 : 0
 for (const level of Object.values(levels)) {
   if (level.worldId === 'meadow') {
     if (!level.boss) extendMeadow(level, Number(level.id.split('-')[1]));
+    if (level.id === '1-1') level.spikes = [];
     level.environment = meadowEnvironment(level);
   }
 }
