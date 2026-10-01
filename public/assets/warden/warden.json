@@ -1,0 +1,1212 @@
+{
+  "frames": {
+    "warden-idle-0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-idle-1": {
+      "frame": {
+        "x": 160,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-idle-2": {
+      "frame": {
+        "x": 320,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-idle-3": {
+      "frame": {
+        "x": 480,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-idle-4": {
+      "frame": {
+        "x": 640,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-idle-5": {
+      "frame": {
+        "x": 800,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-idle-6": {
+      "frame": {
+        "x": 960,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-idle-7": {
+      "frame": {
+        "x": 1120,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-run-0": {
+      "frame": {
+        "x": 0,
+        "y": 128,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-run-1": {
+      "frame": {
+        "x": 160,
+        "y": 128,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-run-2": {
+      "frame": {
+        "x": 320,
+        "y": 128,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-run-3": {
+      "frame": {
+        "x": 480,
+        "y": 128,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-run-4": {
+      "frame": {
+        "x": 640,
+        "y": 128,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-run-5": {
+      "frame": {
+        "x": 800,
+        "y": 128,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-run-6": {
+      "frame": {
+        "x": 960,
+        "y": 128,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-run-7": {
+      "frame": {
+        "x": 1120,
+        "y": 128,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-jump-0": {
+      "frame": {
+        "x": 0,
+        "y": 256,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-jump-1": {
+      "frame": {
+        "x": 160,
+        "y": 256,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-jump-2": {
+      "frame": {
+        "x": 320,
+        "y": 256,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-jump-3": {
+      "frame": {
+        "x": 480,
+        "y": 256,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-jump-4": {
+      "frame": {
+        "x": 640,
+        "y": 256,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-jump-5": {
+      "frame": {
+        "x": 800,
+        "y": 256,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-jump-6": {
+      "frame": {
+        "x": 960,
+        "y": 256,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-jump-7": {
+      "frame": {
+        "x": 1120,
+        "y": 256,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-0": {
+      "frame": {
+        "x": 0,
+        "y": 384,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-1": {
+      "frame": {
+        "x": 160,
+        "y": 384,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-2": {
+      "frame": {
+        "x": 320,
+        "y": 384,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-3": {
+      "frame": {
+        "x": 480,
+        "y": 384,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-4": {
+      "frame": {
+        "x": 640,
+        "y": 384,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-5": {
+      "frame": {
+        "x": 800,
+        "y": 384,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-6": {
+      "frame": {
+        "x": 960,
+        "y": 384,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-7": {
+      "frame": {
+        "x": 1120,
+        "y": 384,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-8": {
+      "frame": {
+        "x": 0,
+        "y": 512,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-9": {
+      "frame": {
+        "x": 160,
+        "y": 512,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-10": {
+      "frame": {
+        "x": 320,
+        "y": 512,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-attack-11": {
+      "frame": {
+        "x": 480,
+        "y": 512,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-hurt-0": {
+      "frame": {
+        "x": 640,
+        "y": 512,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-hurt-1": {
+      "frame": {
+        "x": 800,
+        "y": 512,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-hurt-2": {
+      "frame": {
+        "x": 960,
+        "y": 512,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-hurt-3": {
+      "frame": {
+        "x": 1120,
+        "y": 512,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-hurt-4": {
+      "frame": {
+        "x": 0,
+        "y": 640,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-hurt-5": {
+      "frame": {
+        "x": 160,
+        "y": 640,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-hurt-6": {
+      "frame": {
+        "x": 320,
+        "y": 640,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-hurt-7": {
+      "frame": {
+        "x": 480,
+        "y": 640,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-0": {
+      "frame": {
+        "x": 640,
+        "y": 640,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-1": {
+      "frame": {
+        "x": 800,
+        "y": 640,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-2": {
+      "frame": {
+        "x": 960,
+        "y": 640,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-3": {
+      "frame": {
+        "x": 1120,
+        "y": 640,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-4": {
+      "frame": {
+        "x": 0,
+        "y": 768,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-5": {
+      "frame": {
+        "x": 160,
+        "y": 768,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-6": {
+      "frame": {
+        "x": 320,
+        "y": 768,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-7": {
+      "frame": {
+        "x": 480,
+        "y": 768,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-8": {
+      "frame": {
+        "x": 640,
+        "y": 768,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-9": {
+      "frame": {
+        "x": 800,
+        "y": 768,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-10": {
+      "frame": {
+        "x": 960,
+        "y": 768,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-11": {
+      "frame": {
+        "x": 1120,
+        "y": 768,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-12": {
+      "frame": {
+        "x": 0,
+        "y": 896,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-13": {
+      "frame": {
+        "x": 160,
+        "y": 896,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-14": {
+      "frame": {
+        "x": 320,
+        "y": 896,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    },
+    "warden-death-15": {
+      "frame": {
+        "x": 480,
+        "y": 896,
+        "w": 160,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 128
+      }
+    }
+  },
+  "meta": {
+    "image": "warden.png",
+    "size": {
+      "w": 1280,
+      "h": 1024
+    },
+    "scale": "1"
+  }
+}

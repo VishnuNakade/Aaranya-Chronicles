@@ -64,6 +64,7 @@ for (const level of Object.values(levels)) {
   }
 }
 levels['1-1'].enemies = [
+  { type: 'forestWarden', x: levels['1-1'].width - 210, y: 470, min: levels['1-1'].width - 430, max: levels['1-1'].width - 90, coinDrop: 3, requiredForExit: true },
   { type: 'enemy1', x: 1040, y: 470, min: 960, max: 1290, encounter: 'river-pair' },
   { type: 'enemy1', x: 1210, y: 470, min: 960, max: 1290, encounter: 'river-pair' },
   { type: 'enemy1', x: 1900, y: 470, min: 1780, max: 2220, encounter: 'ruins-pair' },

@@ -40,7 +40,10 @@ export default class GameScene extends Phaser.Scene {
       this.respawnPoint = { ...checkpoint.getData('config').spawn };
       this.bridge.emit('checkpoint', checkpoint.getData('config').id);
     });
-    this.physics.add.overlap(this.player, this.objects.gate, () => { if (!this.player.dead) this.finish(true); });
+    this.physics.add.overlap(this.player, this.objects.gate, () => {
+      const guarded = this.enemies.getChildren().some(enemy => enemy.patrol.requiredForExit);
+      if (!this.player.dead && !guarded) this.finish(true);
+    });
     this.coins = this.physics.add.staticGroup();
     this.level.coins.forEach(([x, y]) => { const coin = this.coins.create(x, y, 'coin'); this.effects.coin(coin); });
     this.physics.add.overlap(this.player, this.coins, (_player, coin) => { if (this.player.dead) return; this.effects.burst(coin.x, coin.y); coin.destroy(); this.coinsCollected++; this.tone(760); this.publish(); });

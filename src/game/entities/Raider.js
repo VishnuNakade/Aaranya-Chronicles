@@ -6,13 +6,14 @@ import { swordFrameActive } from '../art/veerAnimationConfig';
 import EnemyNavigator from './EnemyNavigator';
 
 export default class Raider extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, config) {
-    super(scene, config.x, config.y, 'enemy1', 'enemy1-idle-0');
+  constructor(scene, config, profile = {}) {
+    super(scene, config.x, config.y, profile.texture ?? 'enemy1', `${profile.texture ?? 'enemy1'}-idle-0`);
+    this.profile = profile; this.stats = { ...stats, ...profile.stats }; this.animationPrefix = profile.texture ?? 'enemy1';
     scene.add.existing(this); scene.physics.add.existing(this);
     this.setOrigin(0.5, 88 / 128);
     this.body.setSize(24, 42).setOffset(68, 66);
     this.setCollideWorldBounds(true);
-    this.patrol = config; this.health = this.maxHealth = stats.health;
+    this.patrol = config; this.health = this.maxHealth = this.stats.health;
     this.posture = new Posture(); this.navigator = new EnemyNavigator(scene);
     this.elapsed = 0; this.direction = 1; this.state = 'patrol'; this.dead = false;
     this.invincibleUntil = 0; this.hurtUntil = 0; this.phaseUntil = 0; this.combo = 0;
@@ -23,11 +24,12 @@ export default class Raider extends Phaser.Physics.Arcade.Sprite {
     this.once('destroy', () => { this.healthBar.destroy(); this.cue.destroy(); });
     this.animate('idle');
   }
-  animate(name) { this.play(`enemy1-${name}`, true); }
+  animate(name) { this.play(`${this.animationPrefix}-${name}`, true); }
   update(player, delta) {
+    const stats = this.stats;
     this.elapsed += delta;
     if (this.dead) {
-      if (!this.deathUntil && ((this.body.blocked.down && this.body.velocity.y >= 0) || this.y > this.scene.killY)) { this.setVelocity(0); this.animate('death'); this.deathUntil = this.elapsed + 700; }
+      if (!this.deathUntil && ((this.body.blocked.down && this.body.velocity.y >= 0) || this.y > this.scene.killY)) { this.setVelocity(0); this.animate('death'); this.deathUntil = this.elapsed + (this.profile.deathDuration ?? 700); }
       if (this.deathUntil && this.elapsed >= this.deathUntil) { this.emit('coin-drop', { x: this.x, y: Math.min(this.y, 480) - 12, count: this.coinDrop }); this.destroy(); }
       return;
     }
@@ -41,10 +43,10 @@ export default class Raider extends Phaser.Physics.Arcade.Sprite {
       this.state = 'hurt'; this.animate('hurt'); this.setTint(0xffb4a0);
     } else if (this.state === 'windup') {
       this.setVelocityX(0); this.setTint(0xffcf70); this.cue.setText('!'); this.animate('idle');
-      if (this.elapsed >= this.phaseUntil) { this.state = 'attack'; this.phaseUntil = this.elapsed + stats.attackDuration; this.swingHit = false; this.play('enemy1-attack'); }
+      if (this.elapsed >= this.phaseUntil) { this.state = 'attack'; this.phaseUntil = this.elapsed + stats.attackDuration; this.swingHit = false; this.play(`${this.animationPrefix}-attack`); }
     } else if (this.state === 'attack') {
       this.setVelocityX(0);
-      if (!this.swingHit && enemyAttackFrames.includes(this.anims.currentFrame?.index) && this.anims.currentAnim?.key === 'enemy1-attack') {
+      if (!this.swingHit && (this.profile.attackFrames ?? enemyAttackFrames).includes(this.anims.currentFrame?.index) && this.anims.currentAnim?.key === `${this.animationPrefix}-attack`) {
         const hitbox = new Phaser.Geom.Rectangle(this.direction > 0 ? this.x + 8 : this.x - 76, this.y - 28, 68, 56);
         if (!player.dead && Phaser.Geom.Intersects.RectangleToRectangle(hitbox, player.body)) {
           this.swingHit = true;
@@ -80,13 +82,14 @@ export default class Raider extends Phaser.Physics.Arcade.Sprite {
       .fillStyle(0xefc367).fillRect(this.x - 23, this.y - 65, 46 * this.posture.value / this.posture.max, 3);
   }
   takeDamage(amount = 1, sourceX = this.x - 1) {
+    const stats = this.stats;
     if (this.dead || this.elapsed < this.invincibleUntil) return false;
     const guarded = ['windup', 'attack'].includes(this.state) && (sourceX - this.x) * this.direction > 0 && this.elapsed >= this.posture.brokenUntil;
     const broken = this.posture.damage(guarded ? 40 : 35, this.elapsed);
     this.invincibleUntil = this.elapsed + (guarded ? 300 : stats.invincibility);
     if (!guarded) this.health = Math.max(0, this.health - amount);
     if (!guarded || broken) {
-      this.hurtUntil = this.elapsed + (broken ? 900 : 220); this.state = 'hurt'; this.animate('hurt');
+      this.hurtUntil = this.elapsed + (broken ? 900 : (this.profile.hurtDuration ?? 220)); this.state = 'hurt'; this.animate('hurt');
       this.setVelocity(this.x < sourceX ? -170 : 170, this.body.blocked.down ? 0 : this.body.velocity.y);
     }
     this.emit('damage', this.health);
