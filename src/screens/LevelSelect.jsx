@@ -1,7 +1,7 @@
 import { levels, worlds, getCoinTotal } from '../game/data/levels';
 import { Link, Navigate, useParams } from 'react-router-dom';
-import { Play, Lock, Star, Coins, Clock } from 'lucide-react';
-import Screen from '../components/Screen';
+import { Play, Lock, Star, Coins, Clock, ArrowLeft } from 'lucide-react';
+import './LevelSelect.css';
 import { useProgress } from '../app/ProgressContext';
 import { formatTime } from '../game/results';
 import StoryGate from '../components/StoryGate';
@@ -10,8 +10,13 @@ export default function LevelSelect() {
   const { worldId } = useParams();
   const world = worlds.find(w => w.id === worldId);
   if (!world?.levelIds.length) return <Navigate to="/worlds" replace />;
-  return <StoryGate storyId={world.storyId}><Screen title={world.name} eyebrow="CHOOSE YOUR PATH" back="/worlds">
-    <p className="subtitle">Follow the river. Find your next light.</p>
+  const stars = world.levelIds.reduce((sum, id) => sum + (save.results[id]?.stars ?? 0), 0);
+  return <StoryGate storyId={world.storyId}><main className="level-select">
+    <header className="level-select-header">
+      <Link className="icon-button" to="/worlds" aria-label="Back to world map" title="Back to world map"><ArrowLeft size={21} /></Link>
+      <h1>{world.name}</h1>
+      <span className="level-select-stars" aria-label={`${stars} of ${world.levelIds.length * 3} stars`}><Star size={18} fill="currentColor" />{stars} / {world.levelIds.length * 3}</span>
+    </header>
     <div className="levels">{world.levelIds.map(id => {
       const level = levels[id]; const record = save.results[id]; const unlocked = save.unlockedLevels.includes(id);
       const contents = <><div className="level-art"><span>{id}</span>{unlocked ? <Play size={32} /> : <Lock size={28} />}</div>
@@ -22,5 +27,5 @@ export default function LevelSelect() {
         </div></>;
       return unlocked ? <Link key={id} className="level available" to={`/play/${id}`} aria-label={`Level ${id}: ${level.name}`}>{contents}</Link>
         : <div key={id} className="level locked" aria-label={`Level ${id}: locked`}>{contents}</div>;
-    })}</div></Screen></StoryGate>;
+    })}</div></main></StoryGate>;
 }

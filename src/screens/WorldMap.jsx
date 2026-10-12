@@ -19,7 +19,7 @@ export default function WorldMap() {
   return <main className="atlas-screen">
     <header className="atlas-header">
       <Link className="icon-button" to="/" aria-label="Back to main menu" title="Back to main menu"><ArrowLeft size={21} /></Link>
-      <div className="atlas-title"><span>AARANYA CHRONICLES</span><h1>World Map</h1></div>
+      <div className="atlas-title"><h1>World Map</h1></div>
       <span className="atlas-stars" aria-label={`${earned} of ${total} stars`}><Star size={20} fill="currentColor" />{earned}<small>/ {total}</small></span>
     </header>
     <div className="atlas-scroll" tabIndex={0} role="region" aria-label="Connected world locations">

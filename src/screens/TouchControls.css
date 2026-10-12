@@ -24,3 +24,12 @@
   .touch-controls .artwork-control { width: 64px; height: 64px; }
   .touch-controls > div { gap: 8px; }
 }
+@media (orientation: landscape) and (max-height: 700px) {
+  .play-screen { padding: 0; height: 100dvh; min-height: 0; }
+  .play-screen .play-header, .play-screen .game-footer { display: none; }
+  .play-screen .game-stage { width: 100%; height: 100dvh; max-width: none; aspect-ratio: auto; }
+  .touch-controls .artwork-control { width: 88px; height: 88px; }
+  .touch-controls { bottom: 12px; left: max(16px, env(safe-area-inset-left)); right: max(16px, env(safe-area-inset-right)); }
+  .touch-controls > div { gap: 14px; }
+  .healing-control { width: 68px; height: 68px; bottom: 114px; right: max(24px, env(safe-area-inset-right)); }
+}

@@ -1,0 +1,38 @@
+@media (max-height: 700px) and (orientation: landscape) {
+  .menu.menu { height: 100dvh; min-height: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  .menu.menu .menu-header { padding: 8px 24px; }
+  .menu.menu .menu-content { flex: 1; min-height: 0; width: 340px; max-width: 44%; margin: 0 0 12px 24px; display: flex; flex-direction: column; justify-content: center; }
+  .menu.menu .menu-content > .eyebrow { grid-column: 1; margin: 0 0 8px; }
+  .menu.menu h1 { grid-column: 1; font-size: 48px; }
+  .menu.menu h1 span { font-size: 24px; margin: 8px 0 0; }
+  .menu.menu .ornament { display: none; }
+  .menu.menu .menu-intro { display: none; }
+  .menu.menu .menu-actions { width: 100%; margin: 18px 0 0; gap: 8px; }
+  .menu.menu .menu-actions a { min-height: 44px; padding: 10px 14px; gap: 8px; }
+  .menu.menu .story-link { margin-top: 8px; min-height: 32px; align-self: flex-start; }
+  .menu.menu .menu-footer { display: none; }
+  .menu.menu .menu-footer > span:first-child { font-size: 17px; }
+}
+@media (max-height: 380px) and (orientation: landscape) {
+  .menu.menu .menu-header { padding-top: 4px; padding-bottom: 4px; }
+  .menu.menu h1 { font-size: 36px; }
+  .menu.menu h1 span { font-size: 20px; }
+  .menu.menu .menu-content > .eyebrow { display: none; }
+  .menu.menu .menu-content { margin-bottom: 4px; }
+  .menu.menu .menu-actions { margin-top: 10px; gap: 6px; }
+  .menu.menu .menu-intro { margin-top: 8px; }
+  .menu.menu .menu-footer { display: none; }
+  .menu.menu .story-link { margin-top: 8px; }
+}
+@media (max-width: 600px) and (orientation: portrait) {
+  .menu.menu { height: 100dvh; min-height: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  .menu.menu .menu-header { padding: 12px 6%; }
+  .menu.menu .menu-content { min-height: 0; margin: 0 auto; display: flex; flex-direction: column; justify-content: center; }
+  .menu.menu h1 { font-size: 48px; }
+  .menu.menu h1 span { font-size: 25px; }
+  .menu.menu .ornament { margin: 16px 0; max-width: 100%; }
+  .menu.menu .menu-actions { margin-top: 18px; gap: 10px; }
+  .menu.menu .menu-actions a { min-height: 44px; padding: 10px 14px; }
+  .menu.menu .story-link { margin-top: 16px; }
+  .menu.menu .menu-footer { padding: 12px 0; }
+}
