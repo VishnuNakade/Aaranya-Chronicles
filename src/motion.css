@@ -13,5 +13,5 @@
 @keyframes completion-arrive { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes star-arrive { from { opacity: 0; transform: scale(.5) rotate(-15deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
 html[data-reduced-motion="true"] *, .still * { animation: none !important; transition: none !important; }
-html[data-reduced-motion="true"] :is(button, a):active { transform: none !important; }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } :is(button, a):active { transform: none !important; } }
+html[data-reduced-motion="true"] :is(.primary-button, .secondary-button, .icon-button, .touch-button, .hud-pause):active { transform: none !important; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } :is(.primary-button, .secondary-button, .icon-button, .touch-button, .hud-pause):active { transform: none !important; } }

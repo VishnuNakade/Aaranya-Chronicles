@@ -17,6 +17,6 @@ test('sound assets load and audio switches, pauses and mutes', async ({ page }) 
     const muted = !Object.values(s.audio.sounds).some(sound => sound.isPlaying);
     return { loaded, combat, normal, volume, sword, paused, muted };
   });
-  expect(result.volume).toBeCloseTo(0.14);
+  expect(result.volume).toBeCloseTo(0.35);
   expect(result).toMatchObject({ loaded: true, combat: true, normal: false, sword: true, paused: true, muted: true });
 });

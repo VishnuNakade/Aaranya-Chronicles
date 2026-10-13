@@ -5,7 +5,7 @@ export default function GameHUD({ health, maxHealth = 3, posture = 100, coins, t
   return <div className="fantasy-hud" role="region" aria-label="Game status">
     <div className="hud-vitals">
       <span className="hud-emblem" aria-hidden="true"><Leaf size={22} /></span>
-      <div className="hud-bars"><span className="hud-caption">VEER</span>
+      <div className="hud-bars"><span className="hud-caption">AARANYA</span>
         <label>Life<progress aria-label="Life" max={maxHealth} value={health} /></label>
         <label>Posture<progress className="posture-meter" aria-label="Posture" max={100} value={posture} /></label>
       </div>

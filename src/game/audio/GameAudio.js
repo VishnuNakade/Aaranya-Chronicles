@@ -39,8 +39,8 @@ export default class GameAudio {
     const fighting = s.enemies.getChildren().some(e => !e.dead && e.aggro) || (s.boss && !s.boss.dead && Math.abs(s.boss.x - s.player.x) < 500);
     if (fighting) this.combatUntil = s.time.now + 1800;
     const combat = fighting || s.time.now < this.combatUntil;
-    this.loop('meadow-ambience', !combat, 0.25);
-    this.loop('combat-music', combat, 0.14);
+    this.loop('meadow-ambience', !combat, 0.5);
+    this.loop('combat-music', combat, 0.35);
     this.loop('veer-footsteps', !s.player.dead && s.player.state === 'run' && s.player.body.blocked.down && Math.abs(s.player.body.velocity.x) > 20, 0.24);
   }
   loop(key, enabled, volume) {
