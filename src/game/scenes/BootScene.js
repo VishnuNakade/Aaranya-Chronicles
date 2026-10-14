@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { preloadDog, createDogAnimations } from '../art/dogAnimations';
 import { preloadAudio } from '../audio/GameAudio';
 import { preloadWarden, createWardenAnimations } from '../art/wardenAnimationConfig';
 import { preloadEnvironment } from '../environment/assets';
@@ -9,6 +10,7 @@ import { preloadHealth, createHealthAnimations } from '../art/healthAnimations';
 export default class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
   preload() {
+    if (this.registry.get('level').rescue) preloadDog(this);
     preloadAudio(this);
     this.load.maxParallelDownloads = 4;
     preloadVeer(this);
@@ -20,6 +22,7 @@ export default class BootScene extends Phaser.Scene {
     else this.load.image('forest', '/assets/forest.png');
   }
   create() {
+    if (this.registry.get('level').rescue) createDogAnimations(this);
     createVeerAnimations(this);
     createHealthAnimations(this);
     createEnemyAnimations(this);

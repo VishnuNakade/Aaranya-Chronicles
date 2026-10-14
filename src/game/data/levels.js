@@ -60,12 +60,25 @@ export const getEnemyTotal = level => level.enemies.length + (level.boss ? 1 : 0
 for (const level of Object.values(levels)) {
   if (level.worldId === 'meadow') {
     if (!level.boss) extendMeadow(level, Number(level.id.split('-')[1]));
-    if (level.id === '1-1') level.spikes = [];
+    if (level.id === '1-1') {
+      level.spikes = [];
+      const arena = level.ground[level.ground.length - 1];
+      arena[2] += 720;
+      level.width += 720;
+      level.platforms = level.platforms.filter(([x]) => x < arena[0]);
+      level.platforms.push([arena[0] + 170, 410, 150, 24], [arena[0] + 740, 395, 160, 24]);
+      level.crates = level.crates.filter(crate => crate.x < arena[0]);
+      level.coins = level.coins.filter(([x]) => x < arena[0]);
+      level.crates.push({ id: 'arena-healing', x: arena[0] + 90, y: 486 });
+      level.arena = { left: arena[0] + 40, right: level.width - 40, floor: 510 };
+      level.rescue = { x: level.width - 125, y: 510, hits: 3 };
+      level.exit.x = level.rescue.x;
+    }
     level.environment = meadowEnvironment(level);
   }
 }
 levels['1-1'].enemies = [
-  { type: 'forestWarden', x: levels['1-1'].width - 210, y: 470, min: levels['1-1'].width - 430, max: levels['1-1'].width - 90, coinDrop: 3, requiredForExit: true },
+  { type: 'forestWarden', x: levels['1-1'].width - 510, y: 470, min: levels['1-1'].arena.left + 120, max: levels['1-1'].width - 240, arena: levels['1-1'].arena, coinDrop: 3, requiredForExit: true },
   { type: 'enemy1', x: 1040, y: 470, min: 960, max: 1290, encounter: 'river-pair' },
   { type: 'enemy1', x: 1210, y: 470, min: 960, max: 1290, encounter: 'river-pair' },
   { type: 'enemy1', x: 1900, y: 470, min: 1780, max: 2220, encounter: 'ruins-pair' },

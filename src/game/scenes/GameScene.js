@@ -50,7 +50,7 @@ export default class GameScene extends Phaser.Scene {
       this.respawnPoint = { ...checkpoint.getData('config').spawn };
       this.bridge.emit('checkpoint', checkpoint.getData('config').id);
     });
-    this.physics.add.overlap(this.player, this.objects.gate, () => {
+    if (this.objects.gate) this.physics.add.overlap(this.player, this.objects.gate, () => {
       const guarded = this.enemies.getChildren().some(enemy => enemy.patrol.requiredForExit);
       if (!this.player.dead && !guarded) this.finish(true);
     });
@@ -176,6 +176,7 @@ export default class GameScene extends Phaser.Scene {
     }
     this.enemies.getChildren().slice().forEach(enemy => { enemy.update(this.player, delta); if (enemy.active && !enemy.dead && this.player.hitEnemy(enemy)) enemy.takeDamage(1, this.player.x); });
     this.objects.crates.getChildren().slice().forEach(crate => { if (crate.hittable && this.player.hitEnemy(crate)) { crate.hit(); this.tone(220); } });
+    this.objects.rescue?.update(this.player, delta);
     if (this.player.y > this.killY) { this.player.takeDamage(); this.player.respawn(this.respawnPoint.x, this.respawnPoint.y); this.cameras.main.centerOn(this.respawnPoint.x, this.respawnPoint.y); }
   }
 }
