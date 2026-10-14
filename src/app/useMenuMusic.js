@@ -3,7 +3,7 @@ import menuTrack from '../assets/sound/game-bg.mp3';
 
 export default function useMenuMusic(pathname, soundEnabled) {
   const audioRef = useRef(null);
-  const active = soundEnabled && (pathname === '/' || pathname === '/settings' || pathname === '/worlds' || /^\/worlds\/[^/]+\/levels$/.test(pathname));
+  const active = soundEnabled && (pathname === '/' || pathname === '/journey' || pathname === '/settings' || pathname === '/worlds' || /^\/worlds\/[^/]+\/levels$/.test(pathname));
   useEffect(() => {
     const audio = new Audio(menuTrack);
     audio.loop = true;

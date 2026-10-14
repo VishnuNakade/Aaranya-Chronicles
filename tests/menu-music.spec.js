@@ -12,7 +12,7 @@ test('menu music persists through map and levels, stops for gameplay and mute', 
   await page.goto('/#/');
   await page.mouse.click(300, 100);
   await expect.poll(() => page.evaluate(() => window.menuAudio.some(a => !a.paused))).toBe(true);
-  for (const route of ['/worlds', '/worlds/meadow/levels', '/settings']) {
+  for (const route of ['/journey', '/worlds', '/worlds/meadow/levels', '/settings']) {
     await page.evaluate(route => { location.hash = route; }, route);
     await expect.poll(() => page.evaluate(() => window.menuAudio.filter(a => !a.paused).length)).toBe(1);
   }

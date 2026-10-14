@@ -71,6 +71,7 @@ for (const level of Object.values(levels)) {
       level.coins = level.coins.filter(([x]) => x < arena[0]);
       level.crates.push({ id: 'arena-healing', x: arena[0] + 90, y: 486 });
       level.arena = { left: arena[0] + 40, right: level.width - 40, floor: 510 };
+      level.encounterStory = { id: 'ranga-captive', triggerX: arena[0] + 40 };
       level.rescue = { x: level.width - 125, y: 510, hits: 3 };
       level.exit.x = level.rescue.x;
     }

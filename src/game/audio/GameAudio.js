@@ -1,4 +1,6 @@
 const files = import.meta.glob('../../assets/sound/*.mp3', { eager: true, query: '?url', import: 'default' });
+// Skip the recordings' quiet lead-ins; input and animation timing stay unchanged.
+const attackLeadIn = { 'veer-sword': 0.15, 'enemy-sword': 0.25, 'warden-sword': 0.08 };
 export function preloadAudio(scene) {
   for (const [path, url] of Object.entries(files)) scene.load.audio(path.split('/').pop().replace('.mp3', ''), url);
 }
@@ -18,7 +20,7 @@ export default class GameAudio {
     const sound = this.sounds[key];
     if (sound.isPlaying) sound.stop();
     sound.setVolume(key === 'jump' ? 0.35 : 0.7);
-    sound.play();
+    sound.play({ seek: attackLeadIn[key] ?? 0 });
     // Jump recordings are long; limit playback to the actual takeoff cue.
     if (key === 'jump') {
       this.jumpStop?.remove();

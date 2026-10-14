@@ -10,11 +10,15 @@ import { buildLevel } from '../level/buildLevel';
 import { getCoinTotal, getEnemyTotal } from '../data/levels';
 import { calculateStars } from '../results';
 import HealingInventory from '../items/HealingInventory';
+import HealingHint from '../items/HealingHint';
+import JumpHint from '../items/JumpHint';
 import { healingEffect } from '../items/HealthCrate';
 export default class GameScene extends Phaser.Scene {
   constructor() { super('GameScene'); }
   create(data = {}) {
     const retry = data.retry;
+    this.encounterStorySeen = retry?.encounterStorySeen ?? false;
+    this.encounterStoryOpen = false;
     this.level = this.registry.get('level'); this.bridge = this.registry.get('bridge'); this.settings = this.registry.get('settings');
     this.coinsCollected = 0; this.finished = false; this.touch = {}; this.pending = {}; this.paused = false;
     this.enemiesDefeated = 0; this.elapsedMs = 0; this.boss = null; this.victory = false;
@@ -32,6 +36,8 @@ export default class GameScene extends Phaser.Scene {
     if (!this.environment) this.add.rectangle(480, 270, 960, 540, 0xb0dcc9, 0.14).setScrollFactor(0);
     this.healing = new HealingInventory();
     this.objects = buildLevel(this, this.level);
+    this.healingHint = this.level.id === '1-1' ? new HealingHint(this) : null;
+    this.jumpHint = this.level.id === '1-1' ? new JumpHint(this) : null;
     this.platforms = this.objects.solids;
     this.effects = new GameEffects(this);
     this.player = new Player(this, this.respawnPoint.x, this.respawnPoint.y, this.settings); this.physics.add.collider(this.player, this.platforms);
@@ -96,8 +102,15 @@ export default class GameScene extends Phaser.Scene {
     });
     const offPause = this.bridge.on('pause', paused => this.setPaused(paused));
     const offHeal = this.bridge.on('heal', () => this.tryHeal());
+    const offStory = this.bridge.on('encounter-continue', () => {
+      if (!this.encounterStoryOpen) return;
+      this.encounterStoryOpen = false;
+      this.bridge.emit('encounter-story', null);
+      this.setPaused(false);
+    });
     const offRestart = this.bridge.on('restart', () => this.scene.restart({ retry: this.failed ? {
       respawnPoint: this.respawnPoint, checkpointIndex: this.checkpointIndex,
+      encounterStorySeen: this.encounterStorySeen,
       defeatedEnemies: [...this.defeatedEnemies], enemiesDefeated: this.enemiesDefeated,
       coinsCollected: this.coinsCollected, elapsedMs: this.elapsedMs,
       coins: this.coins.getChildren().map(coin => [coin.x, coin.y]),
@@ -111,10 +124,11 @@ export default class GameScene extends Phaser.Scene {
     this.blur = () => this.setPaused(true);
     this.game.events.on(Phaser.Core.Events.BLUR, this.blur);
     this.game.events.on(Phaser.Core.Events.HIDDEN, this.blur);
-    this.events.once('shutdown', () => { offInput(); offPause(); offHeal(); offRestart(); offSettings(); this.input.keyboard.off('keydown', queueKey); this.game.events.off(Phaser.Core.Events.BLUR, this.blur); this.game.events.off(Phaser.Core.Events.HIDDEN, this.blur); });
+    this.events.once('shutdown', () => { offStory(); offInput(); offPause(); offHeal(); offRestart(); offSettings(); this.input.keyboard.off('keydown', queueKey); this.game.events.off(Phaser.Core.Events.BLUR, this.blur); this.game.events.off(Phaser.Core.Events.HIDDEN, this.blur); });
     this.publish(); this.bridge.emit('ready');
   }
   setPaused(value) {
+    if (!value && this.encounterStoryOpen) return;
     if (this.finished || this.paused === value) return;
     this.paused = value; this.touch = {}; this.pending = {}; this.input.keyboard.resetKeys();
     this.audio.pause(value);
@@ -161,6 +175,14 @@ export default class GameScene extends Phaser.Scene {
   update(_time, delta) {
     if (!this.keys || this.finished) return;
     if (this.paused || this.victory) return;
+    const story = this.level.encounterStory;
+    if (story && !this.encounterStorySeen && !this.player.dead && this.player.x >= story.triggerX && this.enemies.getChildren().some(enemy => enemy.patrol.requiredForExit && !enemy.dead)) {
+      this.encounterStorySeen = true;
+      this.encounterStoryOpen = true;
+      this.bridge.emit('encounter-story', story.id);
+      this.setPaused(true);
+      return;
+    }
     const follow = 1 - Math.pow(1 - 0.09, Math.min(delta, 50) / (1000 / 60));
     this.cameras.main.setLerp(follow, follow);
     this.elapsedMs += delta;
@@ -169,6 +191,8 @@ export default class GameScene extends Phaser.Scene {
     this.player.update({ left: this.keys.LEFT.isDown || this.keys.A.isDown || this.touch.left, right: this.keys.RIGHT.isDown || this.keys.D.isDown || this.touch.right, ...this.pending }, delta);
     this.pending = {};
     if (this.player.dead) { this.enemies.setVelocityX(0); return; }
+    this.healingHint?.update();
+    this.jumpHint?.update();
     this.fallingRocks?.update(delta);
     if (this.boss) {
       this.boss.update(this.player, delta);

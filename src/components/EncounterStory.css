@@ -1,0 +1,8 @@
+.game-stage .encounter-story { position: fixed; inset: 0; z-index: 200; background: #080e12; color: #f3e4b6; display: flex; flex-direction: column; padding: 12px max(16px, env(safe-area-inset-right)) 12px max(16px, env(safe-area-inset-left)); gap: 10px; }
+.encounter-art { display: block; width: 100%; flex: 1; min-height: 0; object-fit: contain; }
+.encounter-caption { width: 100%; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 24px; }
+.encounter-caption h2 { font-size: 22px; margin: 0 0 5px; }
+.encounter-caption p { font-size: 15px; line-height: 1.4; margin: 0; max-width: 850px; }
+.encounter-caption button { flex: 0 0 auto; min-height: 48px; gap: 24px; }
+@media (max-height: 450px) { .encounter-caption h2 { font-size: 18px; } .encounter-caption p { font-size: 13px; } .encounter-caption { gap: 12px; } }
+@media (orientation: portrait) { .encounter-caption { flex-wrap: wrap; } .encounter-caption button { margin-left: auto; } }
