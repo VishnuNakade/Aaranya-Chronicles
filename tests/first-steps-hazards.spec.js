@@ -4,8 +4,9 @@ import { levels } from '../src/game/data/levels';
 test('First Steps has no spike geometry or artwork; other levels retain spikes', () => {
   expect(levels['1-1'].spikes).toEqual([]);
   expect(levels['1-1'].environment.hazards.filter(hazard => hazard.type === 'spikes')).toEqual([]);
-  expect(levels['1-2'].spikes.length).toBeGreaterThan(0);
-  expect(levels['1-2'].environment.hazards.some(hazard => hazard.type === 'spikes')).toBe(true);
+  expect(levels['1-2'].spikes).toEqual([]);
+  expect(levels['1-2'].environment.hazards.some(hazard => hazard.type === 'spikes')).toBe(false);
+  expect(levels['1-3'].spikes.length).toBeGreaterThan(0);
 });
 
 test('running First Steps scene has no spike sprites or collision bodies', async ({ page }) => {

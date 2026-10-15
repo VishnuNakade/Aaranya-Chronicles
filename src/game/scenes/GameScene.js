@@ -187,6 +187,8 @@ export default class GameScene extends Phaser.Scene {
     this.cameras.main.setLerp(follow, follow);
     this.elapsedMs += delta;
     this.audio.update();
+    // Falling out of the level is fatal, even during damage invincibility.
+    if (!this.player.dead && this.player.y > this.killY) this.player.die();
     if (this.pending.heal) this.tryHeal();
     this.player.update({ left: this.keys.LEFT.isDown || this.keys.A.isDown || this.touch.left, right: this.keys.RIGHT.isDown || this.keys.D.isDown || this.touch.right, ...this.pending }, delta);
     this.pending = {};
@@ -201,6 +203,5 @@ export default class GameScene extends Phaser.Scene {
     this.enemies.getChildren().slice().forEach(enemy => { enemy.update(this.player, delta); if (enemy.active && !enemy.dead && this.player.hitEnemy(enemy)) enemy.takeDamage(1, this.player.x); });
     this.objects.crates.getChildren().slice().forEach(crate => { if (crate.hittable && this.player.hitEnemy(crate)) { crate.hit(); this.tone(220); } });
     this.objects.rescue?.update(this.player, delta);
-    if (this.player.y > this.killY) { this.player.takeDamage(); this.player.respawn(this.respawnPoint.x, this.respawnPoint.y); this.cameras.main.centerOn(this.respawnPoint.x, this.respawnPoint.y); }
   }
 }

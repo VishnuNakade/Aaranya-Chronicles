@@ -103,15 +103,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.attackUntil = 0;
     this.setVelocity(this.x < sourceX ? -170 : 170, this.body.blocked.down ? 0 : this.body.velocity.y);
     this.emit('damage', this.health);
-    if (this.health === 0) {
-      this.dead = true;
-      this.setVelocity(0);
-      this.setAlpha(1);
-      if (this.body.blocked.down || this.y > this.scene.killY) this.startDeathAnimation();
-      else this.setState('fall');
-      this.emit('death');
-    } else this.setState('hurt');
+    if (this.health === 0) this.die();
+    else this.setState('hurt');
     return true;
+  }
+
+  die() {
+    if (this.dead) return;
+    this.health = 0;
+    this.dead = true;
+    this.attackUntil = 0;
+    this.setVelocity(0);
+    this.setAlpha(1);
+    if (this.body.blocked.down || this.y > this.scene.killY) this.startDeathAnimation();
+    else this.setState('fall');
+    this.emit('vitals');
+    this.emit('death');
   }
 
   startDeathAnimation() {

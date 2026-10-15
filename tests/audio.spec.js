@@ -4,8 +4,10 @@ test('sound assets load and audio switches, pauses and mutes', async ({ page }) 
   await page.goto('/#/play/1-1');
   await page.waitForFunction(() => window.__AARANYA_GAME__?.scene.getScene('GameScene')?.audio);
   await page.mouse.click(400, 300);
+  await page.waitForFunction(() => !window.__AARANYA_GAME__.scene.getScene('GameScene').sound.locked);
   const result = await page.evaluate(() => {
     const s = window.__AARANYA_GAME__.scene.getScene('GameScene');
+    s.setPaused(false);
     s.settings.sound = true; s.audio.update();
     const loaded = Object.keys(s.audio.sounds).every(key => s.cache.audio.exists(key));
     const enemy = s.enemies.getChildren()[0]; enemy.aggro = true; s.audio.update();
@@ -14,12 +16,17 @@ test('sound assets load and audio switches, pauses and mutes', async ({ page }) 
     const volume = s.audio.sounds['combat-music'].volume;
     s.audio.effect('veer-sword'); const sword = s.audio.sounds['veer-sword'].isPlaying;
     const swordSeek = s.audio.sounds['veer-sword'].seek;
+    s.audio.effect('jump');
+    const jump = { key: s.audio.sounds.jump.key, volume: s.audio.sounds.jump.currentConfig.volume,
+      playing: s.audio.sounds.jump.isPlaying, duration: s.cache.audio.get('jump-cue').duration };
     s.setPaused(true); const paused = !Object.values(s.audio.sounds).some(sound => sound.isPlaying);
     s.setPaused(false); s.settings.sound = false; s.audio.update();
     const muted = !Object.values(s.audio.sounds).some(sound => sound.isPlaying);
-    return { loaded, combat, normal, volume, sword, swordSeek, paused, muted };
+    return { loaded, combat, normal, volume, sword, swordSeek, jump, paused, muted };
   });
   expect(result.volume).toBeCloseTo(0.35);
+  expect(result.jump).toMatchObject({ key: 'jump-cue', volume: 0.25, playing: true });
+  expect(result.jump.duration).toBeCloseTo(0.55);
   expect(result.swordSeek).toBeGreaterThanOrEqual(0.14);
   expect(result.swordSeek).toBeLessThan(0.25);
   expect(result).toMatchObject({ loaded: true, combat: true, normal: false, sword: true, paused: true, muted: true });

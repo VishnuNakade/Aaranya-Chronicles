@@ -1,5 +1,6 @@
 import { meadowEnvironment } from '../environment/levelEnvironment';
 import { extendMeadow } from './extendMeadow';
+import { configureRiverbend } from './riverbend';
 export const getCoinTotal = level => level.coins.length + (level.enemies ?? []).reduce((sum, enemy) => sum + (enemy.coinDrop ?? 1), 0);
 export const worlds = [
   { id: 'meadow', name: 'Meadow Lands', subtitle: 'Where the journey begins', available: true, levelIds: Array.from({ length: 8 }, (_, i) => `1-${i + 1}`) },
@@ -59,7 +60,8 @@ export const getEnemyTotal = level => level.enemies.length + (level.boss ? 1 : 0
 
 for (const level of Object.values(levels)) {
   if (level.worldId === 'meadow') {
-    if (!level.boss) extendMeadow(level, Number(level.id.split('-')[1]));
+    if (level.id === '1-2') configureRiverbend(level);
+    else if (!level.boss) extendMeadow(level, Number(level.id.split('-')[1]));
     if (level.id === '1-1') {
       level.spikes = [];
       const arena = level.ground[level.ground.length - 1];
