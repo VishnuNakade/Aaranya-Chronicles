@@ -1,4 +1,5 @@
 import { dogVisual } from '../art/dogAnimations';
+import RescueHint from './RescueHint';
 
 export default class DogRescue {
   constructor(scene, config) {
@@ -6,6 +7,7 @@ export default class DogRescue {
     this.config = config;
     this.hits = 0;
     this.state = 'caged';
+    this.hint = new RescueHint(scene, this);
     this.target = scene.add.zone(config.x, config.y - 29, 62, 58);
     scene.physics.add.existing(this.target, true);
     this.art = scene.add.sprite(config.x, config.y + 2, 'dog-1', 'grounded').setOrigin(0.5, 1).setFlipX(true).setDepth(5);
@@ -20,9 +22,10 @@ export default class DogRescue {
     this.art.y = this.config.y + 2;
   }
   update(player, delta) {
+    const guarded = this.scene.enemies.getChildren().some(enemy => enemy.patrol.requiredForExit);
+    this.hint.update(player, guarded);
     if (player.dead) return;
     if (this.state === 'caged') {
-      const guarded = this.scene.enemies.getChildren().some(enemy => enemy.patrol.requiredForExit);
       if (!guarded && player.hitEnemy(this.target)) {
         this.hits++;
         this.scene.effects.hit(this.art);
@@ -35,6 +38,7 @@ export default class DogRescue {
             this.art.play('dog-run'); this.alignArt();
           });
         }
+        this.hint.update(player, guarded);
       }
     } else if (this.state === 'approach') {
       const dx = player.x - this.art.x;

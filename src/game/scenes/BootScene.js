@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import jumpHintButton from '../../assets/controls/jump.png';
 import healHintButton from '../../assets/controls/heal.png';
+import rescueAttackButton from '../../assets/controls/attack.png';
 import { preloadDog, createDogAnimations } from '../art/dogAnimations';
 import { preloadAudio } from '../audio/GameAudio';
 import { preloadWarden, createWardenAnimations } from '../art/wardenAnimationConfig';
@@ -14,7 +15,10 @@ export default class BootScene extends Phaser.Scene {
   preload() {
     if (this.registry.get('level').id === '1-1') this.load.image('jump-hint-button', jumpHintButton);
     if (this.registry.get('level').id === '1-1') this.load.image('heal-hint-button', healHintButton);
-    if (this.registry.get('level').rescue) preloadDog(this);
+    if (this.registry.get('level').rescue) {
+      preloadDog(this);
+      this.load.image('rescue-attack-button', rescueAttackButton);
+    }
     preloadAudio(this);
     this.load.maxParallelDownloads = 4;
     preloadVeer(this);
