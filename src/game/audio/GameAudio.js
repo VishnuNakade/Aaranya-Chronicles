@@ -41,8 +41,8 @@ export default class GameAudio {
     if (actor && Math.abs(actor.x - this.scene.player.x) > 650) return;
     const sound = this.sounds[key];
     if (sound.isPlaying) sound.stop();
-    sound.setVolume(key === 'jump' ? 0.25 : 0.7);
-    sound.play({ volume: key === 'jump' ? 0.25 : 0.7,
+    sound.setVolume(key === 'jump' ? 0.3 : 0.7);
+    sound.play({ volume: key === 'jump' ? 0.3 : 0.7,
       seek: key === 'jump' && sound.key !== 'jump-cue' ? 0.65 : attackLeadIn[key] ?? 0 });
     // Jump recordings are long; limit playback to the actual takeoff cue.
     if (key === 'jump') {
@@ -65,7 +65,7 @@ export default class GameAudio {
     if (fighting) this.combatUntil = s.time.now + 1800;
     const combat = fighting || s.time.now < this.combatUntil;
     this.loop('meadow-ambience', !combat, 0.5);
-    this.loop('combat-music', combat, 0.35);
+    this.loop('combat-music', combat, 0.6);
     this.loop('veer-footsteps', !s.player.dead && s.player.state === 'run' && s.player.body.blocked.down && Math.abs(s.player.body.velocity.x) > 20, 0.24);
   }
   loop(key, enabled, volume) {

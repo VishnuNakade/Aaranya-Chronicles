@@ -2,18 +2,24 @@ import { readdir, readFile, mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { chromium } from '@playwright/test';
-import { wardenAnimationConfig as enemyAnimationConfig } from '../src/game/art/wardenAnimationConfig.js';
+import { wardenAnimationConfig } from '../src/game/art/wardenAnimationConfig.js';
+import { blazefangAnimationConfig } from '../src/game/art/blazefangAnimations.js';
+const blazefang = process.argv.includes('--blazefang');
+const key = blazefang ? 'blazefang' : 'warden';
+const enemyAnimationConfig = blazefang ? blazefangAnimationConfig : wardenAnimationConfig;
 const enemyVisual = { width: 160, height: 128, footX: 80, footY: 108 };
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const sourceDir = path.join(root, 'src/assets/mini boss/Forest Warden');
-const outputDir = path.join(root, 'public/assets/warden');
+const sourceDir = path.join(root, 'src/assets/mini boss', blazefang ? 'Blazefang' : 'Forest Warden');
+const outputDir = path.join(root, 'public/assets', key);
 const frames = [];
 for (const [state, config] of Object.entries(enemyAnimationConfig)) {
   const sequence = name => Number(name.match(/-(\d+)\.png$/i)?.[1]);
-  const names = (await readdir(path.join(sourceDir, state))).filter(name => /\.png$/i.test(name)).sort((a, b) => sequence(a) - sequence(b));
-  if (names.length !== config.count || names.some((name, i) => sequence(name) !== i + 1)) throw new Error(`Invalid ${state} sequence`);
-  for (const [index, name] of names.entries()) frames.push({ name: `warden-${state}-${index}`, path: path.join(sourceDir, state, name), anchor: 0.5,
+  const folder = config.folder ?? state;
+  const names = (await readdir(path.join(sourceDir, folder))).filter(name => /\.png$/i.test(name)).sort((a, b) => sequence(a) - sequence(b));
+  if (names.length !== (config.sourceCount ?? config.count) || names.some((name, i) => sequence(name) !== i + 1)) throw new Error(`Invalid ${state} sequence`);
+  const start = (config.start ?? 1) - 1;
+  for (const [index, name] of names.slice(start, start + config.count).entries()) frames.push({ name: `${key}-${state}-${index}`, path: path.join(sourceDir, folder, name), anchor: 0.5,
     registration: config.registration?.[index], registeredHeight: config.registeredHeight, alignFeet: true });
 }
 const columns = 8;
@@ -70,7 +76,7 @@ try {
   }
   const png = await page.evaluate(() => window.atlas.toDataURL('image/png').split(',')[1]);
   await mkdir(outputDir, { recursive: true });
-  await writeFile(path.join(outputDir, 'warden.png'), Buffer.from(png, 'base64'));
-  await writeFile(path.join(outputDir, 'warden.json'), JSON.stringify({ frames: atlasFrames, meta: { image: 'warden.png', size: { w: width, h: height }, scale: '1' } }, null, 2));
+  await writeFile(path.join(outputDir, `${key}.png`), Buffer.from(png, 'base64'));
+  await writeFile(path.join(outputDir, `${key}.json`), JSON.stringify({ frames: atlasFrames, meta: { image: `${key}.png`, size: { w: width, h: height }, scale: '1' } }, null, 2));
   console.log(`Packed ${frames.length} frames into ${width}x${height}: ${Math.round(Buffer.from(png, 'base64').length / 1024)} KB`);
 } finally { await browser.close(); }

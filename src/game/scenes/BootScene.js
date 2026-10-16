@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { preloadBlazefang, createBlazefangAnimations } from '../art/blazefangAnimations';
 import jumpHintButton from '../../assets/controls/jump.png';
 import healHintButton from '../../assets/controls/heal.png';
 import rescueAttackButton from '../../assets/controls/attack.png';
@@ -26,10 +27,12 @@ export default class BootScene extends Phaser.Scene {
     preloadEnemy(this);
     preloadWarden(this);
     const level = this.registry.get('level');
+    if (level.enemies.some(enemy => enemy.type === 'blazefang')) preloadBlazefang(this);
     if (level.environment) preloadEnvironment(this, level.environment);
     else this.load.image('forest', '/assets/forest.png');
   }
   create() {
+    if (this.registry.get('level').enemies.some(enemy => enemy.type === 'blazefang')) createBlazefangAnimations(this);
     if (this.registry.get('level').rescue) createDogAnimations(this);
     createVeerAnimations(this);
     createHealthAnimations(this);

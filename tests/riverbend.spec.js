@@ -22,7 +22,7 @@ test('Riverbend has a distinct spike-free route with supported encounters', asyn
       gaps: s.level.ground.slice(1).map((g, i) => g[0] - (s.level.ground[i][0] + s.level.ground[i][2])),
     };
   });
-  expect(result).toMatchObject({ spikes: 0, hazards: 0, enemies: 8, platforms: 12, distinct: true, supported: true, boxes: 5 });
+  expect(result).toMatchObject({ spikes: 0, hazards: 0, enemies: 9, platforms: 15, distinct: true, supported: true, boxes: 6 });
   expect(Math.max(...result.gaps)).toBeLessThanOrEqual(170);
   await page.screenshot({ path: 'test-results/riverbend-mobile.png' });
 });
