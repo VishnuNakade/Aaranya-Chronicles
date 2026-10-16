@@ -21,6 +21,19 @@ export default class Blazefang extends ForestWarden {
   }
 
   update(player, delta) {
+    if (!this.dead && !this.scene.encounterStorySeen) {
+      this.setVelocityX(0);
+      this.aggro = false;
+      this.animate('idle');
+      this.drawBars();
+      this.nameLabel.setPosition(this.x, this.y - 104);
+      return;
+    }
+    if (!this.encounterStarted && !this.dead) {
+      this.encounterStarted = true;
+      this.aggro = true;
+      this.patrolWait = 0;
+    }
     const grounded = this.body.blocked.down && this.body.velocity.y >= 0;
     if (grounded && this.wasAirborne) this.landingUntil = this.elapsed + delta + 160;
     this.wasAirborne = !grounded;

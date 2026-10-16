@@ -14,14 +14,16 @@ export default class RescueHint {
         fontFamily: 'Arial', fontSize: `${size}px`, color: '#f3e4b6', align: 'center',
       }).setOrigin(0.5, 0);
       this.progress = text(170, 126, '');
-      const cage = scene.add.image(112, 66, 'dog-1', 'grounded').setFlipX(true);
+      const elder = rescue.config.type === 'elder';
+      const name = elder ? 'THE ELDER' : 'RANGA';
+      const cage = scene.add.image(112, 66, elder ? 'elder' : 'dog-1', elder ? 'elder-0' : 'grounded').setFlipX(!elder);
       cage.setScale(54 / cage.height);
       this.panel.add([
         scene.add.rectangle(170, 77, 340, 154, 0x102c27, 0.97).setStrokeStyle(2, 0xd8b867),
-        text(170, 10, 'FREE RANGA', 15), cage,
+        text(170, 10, `FREE ${name}`, 15), cage,
         text(170, 55, '>'),
         scene.add.image(228, 66, 'rescue-attack-button').setDisplaySize(48, 48),
-        text(170, 103, `Strike the cage ${rescue.config.hits} times to free Ranga.`),
+        text(170, 103, `Strike the cage ${rescue.config.hits} times to free ${elder ? 'the elder' : 'Ranga'}.`),
         this.progress,
       ]);
     }

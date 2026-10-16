@@ -19,7 +19,8 @@ export function normalizeProgress(data) {
     const time = record.bestTimeMs ?? record.timeMs;
     const coins = integer(record.coins, getCoinTotal(levels[id]));
     save.results[id] = { stars: integer(record.stars, 3), coins, bestTimeMs: Number.isFinite(time) && time >= 0 ? Math.floor(time) : null,
-      enemiesDefeated: integer(record.enemiesDefeated, getEnemyTotal(levels[id])), bossDefeated: record.bossDefeated === true };
+      enemiesDefeated: integer(record.enemiesDefeated, getEnemyTotal(levels[id])), bossDefeated: record.bossDefeated === true,
+      rewardId: record.rewardId === levels[id].rescue?.rewardId ? record.rewardId : null };
   }
   // Migrate the original single-level save, without inventing a completion time.
   if (data.completed === true && !save.results[firstLevelId]) save.results[firstLevelId] = { stars: 1, coins: integer(data.bestCoins, getCoinTotal(levels[firstLevelId])), bestTimeMs: null, enemiesDefeated: 0 };
@@ -46,7 +47,8 @@ export function completeLevel(save, result) {
   const previous = save.results[result.levelId];
   const record = { stars: Math.max(previous?.stars ?? 0, run.stars), coins: Math.max(previous?.coins ?? 0, run.coins),
     bestTimeMs: previous?.bestTimeMs == null ? run.timeMs : Math.min(previous.bestTimeMs, run.timeMs),
-    enemiesDefeated: Math.max(previous?.enemiesDefeated ?? 0, run.enemiesDefeated), bossDefeated: Boolean(level.boss && result.bossDefeated), lastRun: run };
+    enemiesDefeated: Math.max(previous?.enemiesDefeated ?? 0, run.enemiesDefeated), bossDefeated: Boolean(level.boss && result.bossDefeated),
+    rewardId: result.rewardId === level.rescue?.rewardId ? result.rewardId : previous?.rewardId ?? null, lastRun: run };
   return { ...save, version: 2, completed: true, bestCoins: result.levelId === firstLevelId ? record.coins : save.bestCoins,
     relics: [...new Set([...(save.relics ?? []), ...(level.boss && level.relicId ? [level.relicId] : [])])],
     results: { ...save.results, [result.levelId]: record },

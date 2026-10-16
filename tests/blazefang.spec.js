@@ -17,6 +17,7 @@ test('Blazefang loads every frame and guards a supported Riverbend arena', async
     const boss = s.enemies.getChildren().find(e => e.patrol.type === 'blazefang');
     const arena = boss.patrol.arena;
     s.setPaused(false);
+    s.encounterStorySeen = true;
     s.player.body.reset(5100, 460);
     boss.body.reset(5480, s.killY + 30);
     boss.update(s.player, 16);

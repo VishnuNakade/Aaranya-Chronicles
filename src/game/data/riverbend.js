@@ -43,6 +43,8 @@ export function configureRiverbend(level) {
       { id: 'river-final', x: 4170, y: 486 },
       { id: 'river-arena-healing', x: 4860, y: 386, platform: 12 },
     ],
+    encounterStory: { id: 'elder-captive', triggerX: 4700 },
+    rescue: { type: 'elder', x: 5880, y: 510, hits: 3, rewardId: 'elder-power-stone', rewardStory: 'elder-stone' },
     exit: { x: 5910, y: 460, width: 42, height: 86, label: 'MOSS & MEMORIES' },
   });
 }

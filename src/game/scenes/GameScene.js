@@ -19,6 +19,7 @@ export default class GameScene extends Phaser.Scene {
     const retry = data.retry;
     this.encounterStorySeen = retry?.encounterStorySeen ?? false;
     this.encounterStoryOpen = false;
+    this.storyContinuation = null; this.rescueCinematic = false; this.rewardId = null;
     this.level = this.registry.get('level'); this.bridge = this.registry.get('bridge'); this.settings = this.registry.get('settings');
     this.coinsCollected = 0; this.finished = false; this.touch = {}; this.pending = {}; this.paused = false;
     this.enemiesDefeated = 0; this.elapsedMs = 0; this.boss = null; this.victory = false;
@@ -107,6 +108,9 @@ export default class GameScene extends Phaser.Scene {
       this.encounterStoryOpen = false;
       this.bridge.emit('encounter-story', null);
       this.setPaused(false);
+      const continuation = this.storyContinuation;
+      this.storyContinuation = null;
+      continuation?.();
     });
     const offRestart = this.bridge.on('restart', () => this.scene.restart({ retry: this.failed ? {
       respawnPoint: this.respawnPoint, checkpointIndex: this.checkpointIndex,
@@ -126,6 +130,12 @@ export default class GameScene extends Phaser.Scene {
     this.game.events.on(Phaser.Core.Events.HIDDEN, this.blur);
     this.events.once('shutdown', () => { offStory(); offInput(); offPause(); offHeal(); offRestart(); offSettings(); this.input.keyboard.off('keydown', queueKey); this.game.events.off(Phaser.Core.Events.BLUR, this.blur); this.game.events.off(Phaser.Core.Events.HIDDEN, this.blur); });
     this.publish(); this.bridge.emit('ready');
+  }
+  showEncounterStory(id, continuation = null) {
+    this.storyContinuation = continuation;
+    this.encounterStoryOpen = true;
+    this.bridge.emit('encounter-story', id);
+    this.setPaused(true);
   }
   setPaused(value) {
     if (!value && this.encounterStoryOpen) return;
@@ -169,6 +179,7 @@ export default class GameScene extends Phaser.Scene {
     this.enemies.getChildren().forEach(enemy => enemy.anims.pause());
     const result = { levelId: this.level.id, won, coins: this.coinsCollected, totalCoins: getCoinTotal(this.level), enemiesDefeated: this.enemiesDefeated, totalEnemies: getEnemyTotal(this.level), bossDefeated: Boolean(this.boss?.dead), relicId: this.boss?.dead ? this.level.relicId : null, timeMs: Math.round(this.elapsedMs) };
     result.stars = calculateStars(result);
+    result.rewardId = won ? this.rewardId : null;
     this.bridge.emit('result', result);
     this.touch = {}; this.pending = {}; this.input.keyboard.resetKeys(); this.cameras.main.stopFollow(); this.sys.pause();
   }
@@ -178,15 +189,20 @@ export default class GameScene extends Phaser.Scene {
     const story = this.level.encounterStory;
     if (story && !this.encounterStorySeen && !this.player.dead && this.player.x >= story.triggerX && this.enemies.getChildren().some(enemy => enemy.patrol.requiredForExit && !enemy.dead)) {
       this.encounterStorySeen = true;
-      this.encounterStoryOpen = true;
-      this.bridge.emit('encounter-story', story.id);
-      this.setPaused(true);
+      this.showEncounterStory(story.id);
       return;
     }
     const follow = 1 - Math.pow(1 - 0.09, Math.min(delta, 50) / (1000 / 60));
     this.cameras.main.setLerp(follow, follow);
     this.elapsedMs += delta;
     this.audio.update();
+    if (this.rescueCinematic) {
+      this.touch = {}; this.pending = {};
+      this.player.update({ left: false, right: false }, delta);
+      this.player.setVelocityX(0);
+      this.enemies.setVelocityX(0);
+      return;
+    }
     // Falling out of the level is fatal, even during damage invincibility.
     if (!this.player.dead && this.player.y > this.killY) this.player.die();
     if (this.pending.heal) this.tryHeal();

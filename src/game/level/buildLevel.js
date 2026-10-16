@@ -1,5 +1,6 @@
 import HealthCrate from '../items/HealthCrate';
 import DogRescue from '../items/DogRescue';
+import ElderRescue from '../items/ElderRescue';
 import { cratePlacement } from '../items/cratePlacement';
 // Geometry uses top-left x/y/width/height; interactive objects use center x/y.
 export function buildLevel(scene, level) {
@@ -41,7 +42,10 @@ export function buildLevel(scene, level) {
     checkpoints.add(zone);
   }
   const exit = level.exit;
-  if (level.rescue) return { solids, spikes, crates, checkpoints, gate: null, rescue: new DogRescue(scene, level.rescue) };
+  if (level.rescue) {
+    const Rescue = level.rescue.type === 'elder' ? ElderRescue : DogRescue;
+    return { solids, spikes, crates, checkpoints, gate: null, rescue: new Rescue(scene, level.rescue) };
+  }
   const gate = scene.add.zone(exit.x, exit.y, exit.width ?? 42, exit.height ?? 86);
   scene.physics.add.existing(gate, true);
   scene.add.rectangle(exit.x, exit.y, (exit.width ?? 42) + 10, (exit.height ?? 86) + 4, 0x283e38).setStrokeStyle(5, 0xd8b867);

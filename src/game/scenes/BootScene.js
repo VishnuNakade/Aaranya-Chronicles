@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { preloadElder, createElderAnimations } from '../art/elderAnimations';
 import { preloadBlazefang, createBlazefangAnimations } from '../art/blazefangAnimations';
 import jumpHintButton from '../../assets/controls/jump.png';
 import healHintButton from '../../assets/controls/heal.png';
@@ -17,7 +18,8 @@ export default class BootScene extends Phaser.Scene {
     if (this.registry.get('level').id === '1-1') this.load.image('jump-hint-button', jumpHintButton);
     if (this.registry.get('level').id === '1-1') this.load.image('heal-hint-button', healHintButton);
     if (this.registry.get('level').rescue) {
-      preloadDog(this);
+      if (this.registry.get('level').rescue.type === 'elder') preloadElder(this);
+      else preloadDog(this);
       this.load.image('rescue-attack-button', rescueAttackButton);
     }
     preloadAudio(this);
@@ -33,7 +35,8 @@ export default class BootScene extends Phaser.Scene {
   }
   create() {
     if (this.registry.get('level').enemies.some(enemy => enemy.type === 'blazefang')) createBlazefangAnimations(this);
-    if (this.registry.get('level').rescue) createDogAnimations(this);
+    if (this.registry.get('level').rescue?.type === 'elder') createElderAnimations(this);
+    else if (this.registry.get('level').rescue) createDogAnimations(this);
     createVeerAnimations(this);
     createHealthAnimations(this);
     createEnemyAnimations(this);
