@@ -31,7 +31,7 @@ test('Blazefang loads every frame and guards a supported Riverbend arena', async
       rescued, arenaWidth: arena.right - arena.left,
       platforms: s.level.platforms.filter(([x, , w]) => x >= arena.left && x + w <= arena.right).length };
   });
-  expect(result).toMatchObject({ health: 8, required: true, frames: 42, deathFrames: 8, rescued: true, platforms: 3 });
+  expect(result).toMatchObject({ health: 8, required: true, frames: 42, deathFrames: 12, rescued: true, platforms: 3 });
   expect(result.arenaWidth).toBeGreaterThanOrEqual(1200);
   await page.waitForTimeout(400);
   await page.screenshot({ path: 'test-results/blazefang-arena-mobile.png' });
@@ -40,6 +40,11 @@ test('Blazefang loads every frame and guards a supported Riverbend arena', async
     const boss = s.enemies.getChildren().find(e => e.patrol.type === 'blazefang');
     boss.state = 'recover'; boss.takeDamage(99, boss.x - 10);
   });
+  await page.waitForFunction(() => {
+    const boss = window.__AARANYA_GAME__.scene.getScene('GameScene').enemies.getChildren().find(e => e.patrol.type === 'blazefang');
+    return boss?.anims.currentAnim?.key === 'blazefang-death' && boss.texture.key === 'warden';
+  });
+  await page.screenshot({ path: 'test-results/blazefang-death-smoke.png' });
   await page.waitForFunction(() => !window.__AARANYA_GAME__.scene.getScene('GameScene').enemies.getChildren().some(e => e.patrol.type === 'blazefang'));
   expect(errors).toEqual([]);
 });

@@ -1,9 +1,10 @@
 import ForestWarden from './ForestWarden';
+import { blazefangDeathDuration } from '../art/blazefangAnimations';
 
 export default class Blazefang extends ForestWarden {
   constructor(scene, config) {
     super(scene, config, {
-      name: 'BLAZEFANG', texture: 'blazefang', deathDuration: 1400, hurtDuration: 400,
+      name: 'BLAZEFANG', texture: 'blazefang', deathDuration: blazefangDeathDuration, hurtDuration: 400,
       attackFrames: [4, 5, 6],
       stats: { health: 8, detection: 550, loseTarget: 1300, attackDuration: 800,
         sequence: [{ warning: 650, recovery: 650 }, { warning: 450, recovery: 1300 }] },
