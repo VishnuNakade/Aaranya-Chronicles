@@ -36,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
     if (!this.environment && this.textures.exists(this.level.background)) this.add.image(480, 270, this.level.background).setDisplaySize(960, 640).setScrollFactor(0).setAlpha(0.72);
     if (!this.environment) this.add.rectangle(480, 270, 960, 540, 0xb0dcc9, 0.14).setScrollFactor(0);
     this.healing = new HealingInventory();
+    this.healing.grantStarterGift(this.level.id);
     this.objects = buildLevel(this, this.level);
     this.healingHint = this.level.id === '1-1' ? new HealingHint(this) : null;
     this.jumpHint = this.level.id === '1-1' ? new JumpHint(this) : null;

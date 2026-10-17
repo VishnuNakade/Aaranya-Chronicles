@@ -5,16 +5,29 @@ const seenKey = 'aaranya:healing-hint:v1';
 export default class HealingHint {
   constructor(scene) {
     this.scene = scene;
-    this.shown = false;
-    try { this.shown = localStorage.getItem(seenKey) === 'seen'; } catch { /* Still show once this run without storage. */ }
-    this.first = scene.objects.crates.getChildren()[0];
+    const ids = scene.level.healingHintCrates ?? [];
+    this.targets = scene.objects.crates.getChildren().filter(crate => ids.includes(crate.itemId));
+    this.first = this.targets[0];
+    this.seen = new Set();
+    for (const id of ids) {
+      try {
+        if (localStorage.getItem(this.storageKey(id)) === 'seen') this.seen.add(id);
+      } catch { /* Still show once this run without storage. */ }
+    }
     scene.events.once('shutdown', () => this.panel?.destroy());
+  }
+  storageKey(id) {
+    return id === '1-1:0' ? seenKey : `${seenKey}:${id}`;
   }
   update() {
     const s = this.scene;
-    if (this.shown || !this.first?.active || s.player.dead || Math.abs(s.player.x - this.first.x) > 150 || Math.abs(s.player.y - this.first.y) > 100) return;
-    this.shown = true;
-    try { localStorage.setItem(seenKey, 'seen'); } catch { /* Storage is optional. */ }
+    if (this.panel?.active || s.player.dead) return;
+    const target = this.targets.find(crate => crate.active && crate.state === 'box'
+      && !this.seen.has(crate.itemId) && Math.abs(s.player.x - crate.x) <= 150
+      && Math.abs(s.player.y - crate.y) <= 100);
+    if (!target) return;
+    this.seen.add(target.itemId);
+    try { localStorage.setItem(this.storageKey(target.itemId), 'seen'); } catch { /* Storage is optional. */ }
     const width = 340;
     const x = Math.max(8, (s.scale.width - width) / 2);
     const panel = s.add.container(x, 100).setScrollFactor(0).setDepth(90);

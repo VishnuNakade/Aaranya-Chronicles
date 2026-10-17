@@ -19,3 +19,30 @@ test('first healing box shows its illustrated hint once', async ({ page }) => {
   });
   expect(await page.evaluate(() => window.__AARANYA_GAME__.scene.getScene('GameScene').healingHint.panel.active)).toBe(false);
 });
+
+test('two later boxes show independent hints after the first was already seen', async ({ page }) => {
+  test.setTimeout(90000);
+  await page.addInitScript(() => localStorage.setItem('aaranya:healing-hint:v1', 'seen'));
+  await page.goto('/#/play/1-1');
+  await page.waitForFunction(() => window.__AARANYA_GAME__?.scene.getScene('GameScene')?.player);
+  const result = await page.evaluate(() => {
+    const s = window.__AARANYA_GAME__.scene.getScene('GameScene');
+    const hint = s.healingHint;
+    s.physics.pause();
+    const shown = hint.targets.slice(1).map(crate => {
+      s.player.setPosition(crate.x - 100, crate.y);
+      hint.update();
+      const panel = hint.panel;
+      const active = !!panel?.active;
+      hint.update();
+      const samePanel = hint.panel === panel;
+      panel?.destroy();
+      hint.update();
+      return { active, samePanel, repeated: !!hint.panel?.active,
+        stored: localStorage.getItem(hint.storageKey(crate.itemId)) };
+    });
+    return { count: hint.targets.length, shown };
+  });
+  expect(result.count).toBe(3);
+  expect(result.shown).toEqual(Array(2).fill({ active: true, samePanel: true, repeated: false, stored: 'seen' }));
+});
