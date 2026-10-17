@@ -1,6 +1,7 @@
 const files = import.meta.glob('../../assets/sound/*.mp3', { eager: true, query: '?url', import: 'default' });
 // Skip the recordings' quiet lead-ins; input and animation timing stay unchanged.
 const attackLeadIn = { 'veer-sword': 0.15, 'enemy-sword': 0.25, 'warden-sword': 0.08 };
+const combatMusicHoldMs = 8000;
 export function preloadAudio(scene) {
   for (const [path, url] of Object.entries(files)) scene.load.audio(path.split('/').pop().replace('.mp3', ''), url);
 }
@@ -62,7 +63,7 @@ export default class GameAudio {
     if (!s.settings.sound) { Object.values(this.sounds).forEach(sound => sound.stop()); return; }
     if (this.suspended || s.sound.locked || s.finished) return;
     const fighting = s.enemies.getChildren().some(e => !e.dead && e.aggro) || (s.boss && !s.boss.dead && Math.abs(s.boss.x - s.player.x) < 500);
-    if (fighting) this.combatUntil = s.time.now + 1800;
+    if (fighting) this.combatUntil = s.time.now + combatMusicHoldMs;
     const combat = fighting || s.time.now < this.combatUntil;
     this.loop('meadow-ambience', !combat, 0.5);
     this.loop('combat-music', combat, 0.6);
