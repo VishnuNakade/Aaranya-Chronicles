@@ -2,9 +2,13 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Coins, Swords, Clock, ArrowRight, RotateCcw, Map } from 'lucide-react';
 import { formatTime } from '../game/results';
+import useMenuMusic from '../app/useMenuMusic';
+import { useProgress } from '../app/ProgressContext';
 import './LevelComplete.css';
 
 export default function LevelComplete({ result, level, nextAvailable, onReplay, storageError }) {
+  const { save } = useProgress();
+  useMenuMusic('/', save.settings.sound);
   const heading = useRef(null);
   useEffect(() => { heading.current?.focus(); }, []);
   return <div className="game-overlay completion-overlay"><section className="completion" role="dialog" aria-modal="true" aria-labelledby="completion-title">

@@ -7,7 +7,7 @@ export default class HealingHint {
     this.scene = scene;
     const ids = scene.level.healingHintCrates ?? [];
     this.targets = scene.objects.crates.getChildren().filter(crate => ids.includes(crate.itemId));
-    this.first = this.targets[0];
+    this.first = this.targets.find(crate => crate.itemId === '1-1:0');
     this.seen = new Set();
     for (const id of ids) {
       try {
@@ -21,8 +21,11 @@ export default class HealingHint {
   }
   update() {
     const s = this.scene;
+    const nearFirst = this.first?.active && this.first.state !== 'collected' && !s.player.dead
+      && Math.abs(s.player.x - this.first.x) <= 150 && Math.abs(s.player.y - this.first.y) <= 100;
+    if (this.panel?.active && this.panelTarget === this.first && !nearFirst) this.panel.destroy();
     if (this.panel?.active || s.player.dead) return;
-    const target = this.targets.find(crate => crate.active && crate.state === 'box'
+    const target = nearFirst ? this.first : this.targets.find(crate => crate !== this.first && crate.active && crate.state === 'box'
       && !this.seen.has(crate.itemId) && Math.abs(s.player.x - crate.x) <= 150
       && Math.abs(s.player.y - crate.y) <= 100);
     if (!target) return;
@@ -32,6 +35,7 @@ export default class HealingHint {
     const x = Math.max(8, (s.scale.width - width) / 2);
     const panel = s.add.container(x, 100).setScrollFactor(0).setDepth(90);
     this.panel = panel;
+    this.panelTarget = target;
     const bg = s.add.rectangle(width / 2, 75, width, 150, 0x102c27, 0.97).setStrokeStyle(2, 0xd8b867);
     const text = (x, y, value, size = 12) => s.add.text(x, y, value, { fontFamily: 'Arial', fontSize: `${size}px`, color: '#f3e4b6', align: 'center' }).setOrigin(0.5, 0);
     panel.add([bg, text(170, 10, 'FOREST HEALING', 15),
@@ -41,6 +45,6 @@ export default class HealingHint {
       text(173, 96, '2. Strike the plant'), text(227, 58, '>'),
       s.add.image(282, 65, 'heal-hint-button').setDisplaySize(48, 48), text(282, 96, '3. Tap heal'),
       text(170, 125, 'Full life? Your healing charge stays stored.', 11)]);
-    s.time.delayedCall(10000, () => panel.destroy());
+    if (target !== this.first) s.time.delayedCall(10000, () => panel.destroy());
   }
 }

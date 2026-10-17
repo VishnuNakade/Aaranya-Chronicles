@@ -26,6 +26,10 @@ export default class GameScene extends Phaser.Scene {
     this.respawnPoint = { ...this.level.spawn }; this.checkpointIndex = -1;
     this.defeatedEnemies = new Set(retry?.defeatedEnemies ?? []);
     this.failed = false;
+    this.healTutorial = false;
+    this.healTutorialCount = 0;
+    this.healTutorialHealth = null;
+    this.bridge.emit('heal-tutorial', false);
     if (retry) {
       this.respawnPoint = { ...retry.respawnPoint }; this.checkpointIndex = retry.checkpointIndex;
       this.coinsCollected = retry.coinsCollected; this.enemiesDefeated = retry.enemiesDefeated; this.elapsedMs = retry.elapsedMs;
@@ -139,7 +143,7 @@ export default class GameScene extends Phaser.Scene {
     this.setPaused(true);
   }
   setPaused(value) {
-    if (!value && this.encounterStoryOpen) return;
+    if (!value && (this.encounterStoryOpen || this.healTutorial)) return;
     if (this.finished || this.paused === value) return;
     this.paused = value; this.touch = {}; this.pending = {}; this.input.keyboard.resetKeys();
     this.audio.pause(value);
@@ -150,8 +154,15 @@ export default class GameScene extends Phaser.Scene {
   }
   publish() { this.bridge.emit('hud', { health: this.player.health, maxHealth: this.player.maxHealth, posture: this.player.posture.value, coins: this.coinsCollected, healingCharges: this.healing.charges }); }
   tryHeal() {
-    if (this.paused || this.finished || this.victory || !this.player || this.player.dead) return false;
+    if ((this.paused && !this.healTutorial) || this.finished || this.victory || !this.player || this.player.dead) return false;
     if (!this.healing.use(this.player)) return false;
+    if (this.healTutorial) {
+      this.healTutorial = false;
+      this.healTutorialCount++;
+      this.healTutorialHealth = this.player.health;
+      this.bridge.emit('heal-tutorial', false);
+      this.setPaused(false);
+    }
     healingEffect(this, this.player.x, this.player.body.bottom);
     this.publish(); this.tone(880); return true;
   }
@@ -187,6 +198,16 @@ export default class GameScene extends Phaser.Scene {
   update(_time, delta) {
     if (!this.keys || this.finished) return;
     if (this.paused || this.victory) return;
+    const lostHealth = this.player.health < (this.healTutorialHealth ?? this.player.maxHealth);
+    this.healTutorialHealth = this.player.health;
+    if (this.level.id === '1-1' && this.healTutorialCount < 2 && lostHealth && !this.player.dead
+      && this.player.health > 0 && this.player.health < this.player.maxHealth
+      && this.healing.charges > 0 && !this.rescueCinematic) {
+      this.healTutorial = true;
+      this.bridge.emit('heal-tutorial', true);
+      this.setPaused(true);
+      return;
+    }
     const story = this.level.encounterStory;
     if (story && !this.encounterStorySeen && !this.player.dead && this.player.x >= story.triggerX && this.enemies.getChildren().some(enemy => enemy.patrol.requiredForExit && !enemy.dead)) {
       this.encounterStorySeen = true;

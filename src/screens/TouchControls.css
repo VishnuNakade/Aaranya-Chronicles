@@ -42,3 +42,10 @@
 .loading-track::after { content: ''; display: block; width: 50%; height: 100%; background: #e4c574; animation: loading-travel 1.2s ease-in-out infinite alternate; }
 @keyframes loading-travel { to { transform: translateX(100%); } }
 @media (prefers-reduced-motion: reduce) { .loading-track::after { animation: none; width: 100%; } }
+.heal-tutorial-shade { position: absolute; inset: 0; z-index: 100; background: rgb(0 0 0 / 45%); touch-action: none; }
+.healing-control.heal-tutorial-target { z-index: 101; }
+.heal-tutorial-prompt { position: absolute; right: calc(100% + 14px); top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 12px; white-space: nowrap; color: #ffe7a4; font-size: 18px; text-shadow: 0 2px 4px #000; pointer-events: none; }
+.heal-tutorial-prompt { top: auto; bottom: 100%; right: 22px; transform: none; padding-right: 140px; min-height: 86px; align-items: flex-start; }
+.healing-control .heal-tutorial-arrow { position: absolute; right: 0; bottom: 0; width: 120px; height: 90px; max-width: none; filter: drop-shadow(0 3px 3px #0008); transform-origin: bottom right; animation: heal-arrow-pulse 900ms ease-in-out infinite; }
+@keyframes heal-arrow-pulse { 0%, 100% { transform: translate(-6px, -6px) scale(.85); } 55% { transform: translate(4px, 4px) scale(1.05); } }
+@media (prefers-reduced-motion: reduce) { .healing-control .heal-tutorial-arrow { animation: none; } }

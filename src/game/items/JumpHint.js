@@ -4,7 +4,7 @@ export default class JumpHint {
     const ground = scene.level.ground;
     this.edges = ground.slice(0, -1)
       .filter(([x, , width], index) => x + width < ground[index + 1][0])
-      .slice(0, 2).map(([x, , width]) => x + width);
+      .slice(0, 3).map(([x, , width]) => x + width);
     const x = Math.max(8, (scene.scale.width - 340) / 2);
     this.panel = scene.add.container(x, 100).setScrollFactor(0).setDepth(90).setVisible(false);
     const text = (x, y, value, size) => scene.add.text(x, y, value, {

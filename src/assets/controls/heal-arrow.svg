@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180">
+  <defs>
+    <linearGradient id="gold" x2=".3" y2="1"><stop stop-color="#fff846"/><stop offset=".55" stop-color="#ffcd00"/><stop offset="1" stop-color="#ff7800"/></linearGradient>
+  </defs>
+  <path d="M15 18 Q135 -4 181 102 L207 76 L225 166 L135 125 L165 113 Q120 40 20 43 Z" fill="#c43a00" stroke="#391200" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M17 19 Q136 0 181 106 L205 82 L218 155 L143 125 L174 117 Q124 36 21 37 Z" fill="url(#gold)" stroke="#ff9b00" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M25 21 Q121 12 167 83 Q112 27 25 26 Z M190 111 L202 95 L213 143 Z" fill="#fff9aa"/>
+</svg>
