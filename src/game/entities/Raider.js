@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import Posture from '../combat/Posture';
 import { enemyCombat as stats } from '../combat/enemyCombat';
-import { enemyAttackFrames } from '../art/enemyAnimationConfig';
+import { enemyAttackFrames, enemyDeathDuration } from '../art/enemyAnimationConfig';
 import { swordFrameActive } from '../art/veerAnimationConfig';
 import EnemyNavigator from './EnemyNavigator';
 
@@ -29,7 +29,7 @@ export default class Raider extends Phaser.Physics.Arcade.Sprite {
     const stats = this.stats;
     this.elapsed += delta;
     if (this.dead) {
-      if (!this.deathUntil && ((this.body.blocked.down && this.body.velocity.y >= 0) || this.y > this.scene.killY)) { this.setVelocity(0); this.animate('death'); this.deathUntil = this.elapsed + (this.profile.deathDuration ?? 700); }
+      if (!this.deathUntil && ((this.body.blocked.down && this.body.velocity.y >= 0) || this.y > this.scene.killY)) { this.setVelocity(0); this.animate('death'); this.deathUntil = this.elapsed + (this.profile.deathDuration ?? enemyDeathDuration); }
       if (this.deathUntil && this.elapsed >= this.deathUntil) { this.emit('coin-drop', { x: this.x, y: Math.min(this.y, 480) - 12, count: this.coinDrop }); this.destroy(); }
       return;
     }
