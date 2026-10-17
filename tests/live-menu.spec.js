@@ -31,13 +31,10 @@ for (const viewport of [{ width: 1136, height: 510 }, { width: 1440, height: 900
     expect(animated.changed / animated.count).toBeLessThan(0.15);
     expect(await page.locator('.menu-actions').boundingBox()).toEqual(bounds);
     await page.screenshot({ path: `test-results/live-menu-${viewport.width}.png` });
-    await page.getByRole('button', { name: 'Use static background' }).click();
-    await expect(canvas).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Use (static|live) background/ })).toHaveCount(0);
     expect(await page.locator('.menu').evaluate(el => getComputedStyle(el).backgroundImage)).toContain('forest.png');
+    await page.evaluate(() => localStorage.setItem('aaranya:live-menu', 'off'));
     await page.reload();
-    await expect(page.getByRole('button', { name: 'Use live background' })).toBeVisible();
-    await expect(canvas).toHaveCount(0);
-    await page.getByRole('button', { name: 'Use live background' }).click();
     await expect(canvas).toHaveAttribute('data-ready', 'true');
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await expect(canvas).toBeHidden();

@@ -40,4 +40,3 @@
 .menu-live-background[data-ready='true'] { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .menu-live-background { visibility: hidden !important; } }
 .menu-header-tools { display: flex; gap: 8px; align-items: center; }
-.menu-header-tools button[aria-pressed='true'] { color: #f6d691; border-color: #d8b867; }
