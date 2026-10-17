@@ -15,14 +15,30 @@ export default class ForestWarden extends Raider {
     if (arena && !this.dead) {
       const x = Math.max(arena.left + 24, Math.min(arena.right - 24, this.x));
       if (this.body.bottom > arena.floor + 50) {
-        this.body.reset(x, arena.floor - 50);
+        this.body.updateFromGameObject();
+        this.body.reset(x, this.y + arena.floor - this.body.bottom);
+        this.body.updateFromGameObject();
         this.setVelocity(0);
         this.navigator.target = null;
         this.navigator.drop = null;
       } else if (x !== this.x) {
         this.x = x;
+        this.body.updateFromGameObject();
         this.setVelocityX(0);
       }
+    }
+    const waiting = arena && (player.x < arena.left || player.x > arena.right
+      || (this.scene.level.encounterStory && !this.scene.encounterStorySeen));
+    if (!this.dead && waiting && this.elapsed >= this.hurtUntil && this.elapsed >= this.posture.brokenUntil) {
+      this.elapsed += delta;
+      this.posture.update(this.elapsed, delta);
+      this.navigator.target = null; this.navigator.drop = null; this.navigator.jumps = 0;
+      this.aggro = false; this.state = 'waiting';
+      this.setVelocityX(0); this.clearTint(); this.cue.setText('');
+      this.animate(this.body.blocked.down ? 'idle' : 'fall');
+      this.drawBars();
+      this.nameLabel.setPosition(this.x, this.y - 104);
+      return;
     }
     super.update(player, delta);
     if (arena && !this.dead && ((this.x <= arena.left + 24 && this.body.velocity.x < 0) || (this.x >= arena.right - 24 && this.body.velocity.x > 0))) this.setVelocityX(0);

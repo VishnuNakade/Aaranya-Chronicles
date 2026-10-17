@@ -24,5 +24,5 @@ test('menu music persists through map and levels, stops for gameplay and mute', 
   await expect.poll(() => page.evaluate(() => window.menuAudio.every(a => a.paused))).toBe(true);
   await page.evaluate(() => { location.hash = '/'; });
   await expect.poll(() => page.evaluate(() => window.menuAudio.some(a => !a.paused))).toBe(true);
-  expect(await page.evaluate(() => window.menuAudio.at(-1).volume)).toBe(0.5);
+  expect(await page.evaluate(() => window.menuAudio.at(-1).volume)).toBe(1);
 });

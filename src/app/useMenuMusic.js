@@ -7,7 +7,7 @@ export default function useMenuMusic(pathname, soundEnabled) {
   useEffect(() => {
     const audio = new Audio(menuTrack);
     audio.loop = true;
-    audio.volume = 0.5;
+    audio.volume = 1;
     audio.preload = 'auto';
     audioRef.current = audio;
     return () => { audio.pause(); audio.removeAttribute('src'); audio.load(); audioRef.current = null; };

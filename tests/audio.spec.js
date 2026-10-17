@@ -35,9 +35,9 @@ test('sound assets load and audio switches, pauses and mutes', async ({ page }) 
     const muted = !Object.values(s.audio.sounds).some(sound => sound.isPlaying);
     return { loaded, combat, normal, volume, sword, swordSeek, jump, paused, muted, heldAfterDeath, refreshedByCombat, returnedToAmbience };
   });
-  expect(result.volume).toBeCloseTo(0.6);
+  expect(result.volume).toBeCloseTo(1);
   expect(result).toMatchObject({ heldAfterDeath: true, refreshedByCombat: true, returnedToAmbience: true });
-  expect(result.jump).toMatchObject({ key: 'jump-cue', volume: 0.3, playing: true });
+  expect(result.jump).toMatchObject({ key: 'jump-cue', volume: 1, playing: true });
   expect(result.jump.duration).toBeCloseTo(0.55);
   expect(result.swordSeek).toBeGreaterThanOrEqual(0.14);
   expect(result.swordSeek).toBeLessThan(0.25);
